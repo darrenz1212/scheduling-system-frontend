@@ -15,8 +15,7 @@ export default function LoginPage() {
         e.preventDefault();
         setError(null);
         try {
-            await handleLogin(id, password, dispatch);
-            navigate("/dosen/home");
+            await handleLogin(id, password, dispatch, navigate);
         } catch (err) {
             setError(err.message);
         }
@@ -62,12 +61,6 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                <p className="text-center text-gray-600 text-sm mt-4">
-                    Don't have an account?{" "}
-                    <a href="/register" className="text-[#0db0bb] font-medium hover:underline">
-                        Sign Up
-                    </a>
-                </p>
             </div>
         </div>
     );

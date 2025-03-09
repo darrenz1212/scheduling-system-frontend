@@ -16,7 +16,7 @@ export function Sidenav({ routes }) {
 
   const sidenavTypes = {
     dark: "bg-gradient-to-br from-gray-800 to-gray-900",
-    white: "bg-white shadow-sm",
+    white: "bg-[#0db0bb] shadow-sm",
     transparent: "bg-transparent",
   };
 
@@ -24,7 +24,7 @@ export function Sidenav({ routes }) {
       <aside
           className={`${sidenavTypes[sidenavType]} ${
               openSidenav ? "translate-x-0" : "-translate-x-80"
-          } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-[#0db0bb] text-white`}
+          } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72  rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 bg-[#0db0bb] text-white`}
       >
         <div className="relative text-center py-8">
           <Link to="/">
@@ -62,7 +62,7 @@ export function Sidenav({ routes }) {
                     </li>
                 )}
                 {pages.map(({ icon, name, path }) => (
-                    <li key={name}>
+                    <li key={name} className="border-b border-white/20 py-1">
                       <NavLink to={path}>
                         {({ isActive }) => (
                             <Button

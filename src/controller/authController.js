@@ -2,7 +2,7 @@
 import { login } from "../api/authService.js";
 import { setUser, setToken } from "../redux/authSlice.jsx";
 
-export const handleLogin = async (id, password, dispatch) => {
+export const handleLogin = async (id, password, dispatch, navigate) => {
     try {
         const data = await login(id, password);
 
@@ -13,6 +13,11 @@ export const handleLogin = async (id, password, dispatch) => {
         dispatch(setUser(data.user));
         dispatch(setToken(data.token));
 
+        if (data.user.role === 3) {
+            navigate("/dosen/home");
+        } else if(data.user.role === 2){
+            navigate('/prodi/home')
+        }
         return data;
     } catch (error) {
         console.error("Login Error:", error);

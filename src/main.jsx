@@ -6,6 +6,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import store, { persistor } from "./redux/store";
 import LoginPage from "./pages/LoginPage.jsx";
 import Home from "./pages/dosen/home.jsx"
+import ProdiHome from "./pages/prodi/home.jsx"
+import Schedule from "./pages/dosen/schedulePick.jsx";
 import "../public/css/index.css";
 import { MaterialTailwindControllerProvider } from "./context";
 
@@ -15,8 +17,16 @@ const router = createBrowserRouter([
         element: <LoginPage />,
     },
     {
-        path : 'dosen/home',
-        element : < Home/>
+        path: 'dosen/home',
+        element: < Home/>
+    },
+    {
+        path : "dosen/schedule",
+        element : <Schedule/>
+    },
+    {
+        path : 'prodi/home',
+        element : <ProdiHome/>
     }
 ]);
 
