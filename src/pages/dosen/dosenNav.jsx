@@ -5,8 +5,8 @@ const routes = [
         title: "Main Menu",
         pages: [
             { name: "My Schedule", path: "/dosen/schedule" },
-            { name: "Pick Schedule", path: "/dosen/pickschedule" },
-            { name: "Schedule History", path: "/tables" },
+            { name: "Pick Schedule", path: "/dosen/addschedule" },
+            { name: "ScheduleDosen History", path: "/tables" },
         ],
     },
     {

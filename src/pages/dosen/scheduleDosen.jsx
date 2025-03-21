@@ -3,7 +3,7 @@ import FullCalendarWrapper from "../../widgets/FullCalenderWrapper.jsx";
 import DosenNav from "./dosenNav.jsx";
 import {useSelector} from "react-redux";
 
-const Schedule = () => {
+const ScheduleDosen = () => {
     const events = [
         { title: "Kuliah AI", start: "mondayT08:00:00", end: "mondayT10:00:00" },
         { title: "Praktikum Jaringan", start: "tuesdayT10:00:00", end: "tuesdayT12:00:00" },
@@ -26,4 +26,4 @@ const Schedule = () => {
     );
 };
 
-export default Schedule;
+export default ScheduleDosen;

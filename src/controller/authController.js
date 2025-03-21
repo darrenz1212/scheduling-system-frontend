@@ -13,9 +13,9 @@ export const handleLogin = async (id, password, dispatch, navigate) => {
         dispatch(setUser(data.user));
         dispatch(setToken(data.token));
 
-        if (data.user.role === 3) {
+        if (data.user.role === "Dosen") {
             navigate("/dosen/home");
-        } else if(data.user.role === 2){
+        } else if(data.user.role === "Prodi"){
             navigate('/prodi/home')
         }
         return data;

@@ -1,0 +1,31 @@
+import api from "../axiosConfig.js"
+
+export const availableScheduleService = async (scheduleData) => {
+    try {
+        const response = await api.post("/api/dosen/addjadwal", scheduleData);
+        return response.data;
+    } catch (error) {
+        console.error("Error in API availableScheduleService:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const matkulList = async (id) =>{
+    try {
+        const response = await api.get(`/api/dosen/matkul-aktif/dosen/${id}`);
+        console.log("Respone Console :  ",response)
+        return response.data;
+    }catch (e){
+        console.error("Error in matkulList",e)
+        return []
+    }
+}
+
+export const dosenAvailableSchedule = async (id) =>{
+    try {
+        const response = await api.get(`http://localhost:8000/api/dosen/jadwal/${id}`)
+        return response.data.result
+    }catch (e){
+        console.error("Error in dosenAvailableSchedule : ", e )
+    }
+}

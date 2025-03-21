@@ -7,7 +7,7 @@ const routes = [
         title: "Main Menu",
         pages: [
             { name: "Schedule", path: "/home" },
-            { name: "Generate Schedule", path: "/tables"},
+            { name: "Generate ScheduleDosen", path: "/tables"},
             { name: "Lecture Availability", path: "/profile" },
             { name: "Lecture Subject", path: "/tables"},
             { name: "Learning Period", path: "/tables"},

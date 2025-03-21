@@ -7,7 +7,8 @@ import store, { persistor } from "./redux/store";
 import LoginPage from "./pages/LoginPage.jsx";
 import Home from "./pages/dosen/home.jsx"
 import ProdiHome from "./pages/prodi/home.jsx"
-import Schedule from "./pages/dosen/schedulePick.jsx";
+import ScheduleDosen from "./pages/dosen/scheduleDosen.jsx";
+import AddSchedule from "./pages/dosen/pickAvailableSchedule.jsx";
 import "../public/css/index.css";
 import { MaterialTailwindControllerProvider } from "./context";
 
@@ -22,7 +23,11 @@ const router = createBrowserRouter([
     },
     {
         path : "dosen/schedule",
-        element : <Schedule/>
+        element : <ScheduleDosen/>
+    },
+    {
+        path : "dosen/addschedule",
+        element : <AddSchedule/>
     },
     {
         path : 'prodi/home',

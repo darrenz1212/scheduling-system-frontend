@@ -1,6 +1,7 @@
 // src/services/authService.js
 import axios from "axios";
 
+
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 export const login = async (id, password) => {
@@ -14,7 +15,7 @@ export const login = async (id, password) => {
 
         return response.data;
     } catch (error) {
-        console.error("Login Error:", error);
+        console.error(" Error in authService.js:", error);
         throw error.response ? error.response.data : { message: "Server error" };
     }
 };
