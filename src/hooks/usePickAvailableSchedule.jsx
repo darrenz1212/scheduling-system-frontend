@@ -65,7 +65,6 @@ export const usePickAvailableSchedule = () => {
         return daysMapping[dayString.toLowerCase()] || 0;
     };
     const formatScheduleLabel = (event) => {
-        console.log(event)
 
         const dayMap = {
             monday: "Senin",
@@ -86,12 +85,11 @@ export const usePickAvailableSchedule = () => {
         return `${dayName} ${timePartStart} - ${timePartEnd}`;
     };
 
-
+    console.log("selected event : ", preferences)
     const handleSubmit = async () => {
         setLoading(true);
         try {
             const selectedSchedules = Object.keys(highlightedEvents).filter((id) => highlightedEvents[id]);
-
             for (const id of selectedSchedules) {
                 const selectedEvent = initialEvents.find((event) => event.id === id);
                 const dayString = selectedEvent.start.split("T")[0].toLowerCase(); 
