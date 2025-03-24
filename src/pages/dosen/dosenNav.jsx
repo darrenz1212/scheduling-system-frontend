@@ -12,7 +12,7 @@ const routes = [
     {
         title: "Auth Pages",
         pages: [
-            { name: "Log Out", path: "/login" },
+            { name: "Log Out", path: "/" },
         ],
     },
 ];

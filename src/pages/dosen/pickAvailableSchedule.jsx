@@ -2,6 +2,7 @@ import React from "react";
 import FullCalendarWrapper from "../../widgets/FullCalenderWrapper.jsx";
 import DosenNav from "./dosenNav.jsx";
 import { usePickAvailableSchedule } from "../../hooks/usePickAvailableSchedule";
+import {useDispatch, useSelector} from "react-redux";
 
 const PickAvailableSchedule = () => {
     const {
@@ -17,8 +18,12 @@ const PickAvailableSchedule = () => {
         handleSubmit,
         loading,
         formatScheduleLabel,
-        matkulOptions,
+        title
     } = usePickAvailableSchedule();
+
+    const matkulOptions = useSelector((state) => state.matkul.data);
+
+    // console.log(matkulList)
 
     return (
         <div className="flex flex-col w-full h-screen bg-gray-100 p-6 relative">
@@ -49,7 +54,7 @@ const PickAvailableSchedule = () => {
             {showModal && (
                 <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-                        <h2 className="text-lg font-semibold mb-4 text-center">Masukkan Mata Kuliah Preferensi</h2>
+                        <h2 className="text-lg font-semibold mb-4 text-center">{title}</h2>
                         <div className="max-h-60 overflow-y-auto">
                             {Object.keys(highlightedEvents).map((id) => {
                                 const selectedEvent = initialEvents.find((event) => event.id === id);
@@ -64,11 +69,11 @@ const PickAvailableSchedule = () => {
                                             onChange={(e) => handleInputChange(id, e.target.value)}
                                         >
                                             <option value="">Pilih Mata Kuliah</option>
-                                            {matkulOptions.map((matkulOption) => (
+                                            {(matkulOptions || []).map((matkulOption) => (
                                                 <option key={matkulOption.id_matkul} value={matkulOption.id}>
                                                     {`${matkulOption.id_matkul} - ${matkulOption.MataKuliah.nama_matkul}${
                                                         matkulOption.praktikum ? " (praktikum)" : ""
-                                                    }`}
+                                                    }- ${matkulOption.kelas}`}
                                                 </option>
                                             ))}
 

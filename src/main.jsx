@@ -11,6 +11,7 @@ import ScheduleDosen from "./pages/dosen/scheduleDosen.jsx";
 import AddSchedule from "./pages/dosen/pickAvailableSchedule.jsx";
 import "../public/css/index.css";
 import { MaterialTailwindControllerProvider } from "./context";
+import LandingPage from "./pages/landingPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
     {
         path : 'prodi/home',
         element : <ProdiHome/>
+    },
+    {
+        path : "lp",
+        element : <LandingPage/>
     }
 ]);
 

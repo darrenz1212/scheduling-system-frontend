@@ -28,4 +28,15 @@ export const dosenAvailableSchedule = async (id) =>{
     }catch (e){
         console.error("Error in dosenAvailableSchedule : ", e )
     }
+
 }
+export const updateAvailableSchedule = async (idJadwal, updatedData) => {
+    try {
+        const response = await api.put(`/api/dosen/jadwal/${idJadwal}`, updatedData);
+        return response.data;
+    } catch (error) {
+        console.error("Error in updateAvailableSchedule:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
