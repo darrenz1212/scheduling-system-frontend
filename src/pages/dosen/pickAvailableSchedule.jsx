@@ -2,7 +2,7 @@ import React from "react";
 import FullCalendarWrapper from "../../widgets/FullCalenderWrapper.jsx";
 import DosenNav from "./dosenNav.jsx";
 import { usePickAvailableSchedule } from "../../hooks/usePickAvailableSchedule";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 
 const PickAvailableSchedule = () => {
     const {
@@ -24,6 +24,8 @@ const PickAvailableSchedule = () => {
     const matkulOptions = useSelector((state) => state.matkul.data);
 
     // console.log(matkulList)
+
+
 
     return (
         <div className="flex flex-col w-full h-screen bg-gray-100 p-6 relative">

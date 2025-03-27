@@ -40,3 +40,24 @@ export const updateAvailableSchedule = async (idJadwal, updatedData) => {
     }
 };
 
+export const fetchAllAvailableSchedule = async ()=>{
+    try {
+        const response = await api.get(`/api/prodi/jadwaldosen`)
+        return response.data
+    }catch (error) {
+        console.error("Error in fetching URL")
+        throw error
+    }
+}
+
+export const fetchDosenList = async () => {
+    try {
+        const response = await api.get(`/api/prodi/getdosen?role=Dosen`);
+        const result = response.data.result || [];
+        return result.filter((dosen) => dosen.status === "Aktif");
+    } catch (error) {
+        console.error("Error fetching dosen list");
+        throw error;
+    }
+};
+
