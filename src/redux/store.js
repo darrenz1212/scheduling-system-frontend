@@ -4,6 +4,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers } from "redux";
 import authReducer from "./authSlice";
 import matkulReducer from "./matkulSlice.jsx"
+import dosenReducer from "./dosenSlice.jsx"
 
 const persistConfig = {
     key: "root",
@@ -12,7 +13,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    matkul : matkulReducer
+    matkul : matkulReducer,
+    dosen : dosenReducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = configureStore({

@@ -4,11 +4,11 @@ const routes = [
     {
         title: "Main Menu",
         pages: [
-            { name: "Schedule", path: "prodi/home" },
-            { name: "Generate Schedule", path: "/tables"},
-            { name: "Lecture Availability", path: "/prodi/dosen-schedule" },
-            { name: "Lecture Subject", path: "/tables"},
-            { name: "Learning Period", path: "/tables"},
+            { name: "Jadwal", path: "prodi/home" },
+            { name: "Buat Jadwal", path: "/tables"},
+            { name: "Ketersediaan Mengajar", path: "/prodi/dosen-schedule" },
+            { name: "Mata Kuliah", path: "/prodi/course"},
+            { name: "Periode", path: "/tables"},
             { name: "Log Out", path: "/"},
         ],
     },

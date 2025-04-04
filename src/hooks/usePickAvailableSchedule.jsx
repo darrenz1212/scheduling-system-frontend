@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initialEvents } from "../pages/dosen/initEvent.jsx";
-import { availableScheduleService, matkulList , dosenAvailableSchedule} from "../api/AvailableScheduleService.js";
+import { addAvailableScheduleService, dosenAvailableSchedule} from "../api/AvailableScheduleService.js";
 import {fetchMatkulList} from "../redux/matkulSlice.jsx";
 import Swal from "sweetalert2";
 
@@ -157,7 +157,7 @@ export const usePickAvailableSchedule = () => {
                     jam_akhir: selectedEvent.end ? selectedEvent.end.split("T")[1] : "00:00:00",
                 };
 
-                await availableScheduleService(formattedData);
+                await addAvailableScheduleService(formattedData);
             }
 
             Swal.fire({

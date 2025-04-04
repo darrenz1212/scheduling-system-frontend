@@ -1,6 +1,6 @@
 import api from "../axiosConfig.js"
 
-export const availableScheduleService = async (scheduleData) => {
+export const addAvailableScheduleService = async (scheduleData) => {
     try {
         const response = await api.post("/api/dosen/addjadwal", scheduleData);
         return response.data;

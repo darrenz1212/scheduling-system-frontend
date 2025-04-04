@@ -13,6 +13,7 @@ import ProdiHome from "./pages/prodi/home.jsx"
 import ScheduleDosen from "./pages/dosen/scheduleDosen.jsx";
 import AddSchedule from "./pages/dosen/pickAvailableSchedule.jsx";
 import LectureAvailabilitySchedule from "./pages/prodi/lectureAvailabilitySchedule.jsx";
+import Course from "./pages/prodi/course/course.jsx";
 
 const router = createBrowserRouter([
     // ============================== Auth ==============================
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
     {
         path : 'prodi/dosen-schedule',
         element : <LectureAvailabilitySchedule/>
+    },
+    {
+        path : 'prodi/course',
+        element : <Course/>
     }
     // {
     //     path : "lp",
