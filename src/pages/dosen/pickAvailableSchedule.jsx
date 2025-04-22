@@ -34,11 +34,12 @@ const PickAvailableSchedule = () => {
                 <h2 className="text-xl font-semibold text-center mb-4">
                     Silahkan pilih jadwal ketersediaan mengajar
                 </h2>
-                <FullCalendarWrapper
-                    events={initialEvents}
-                    eventClassNames={eventClassNames}
-                    handleEventClick={handleEventClick}
-                />
+                    <FullCalendarWrapper
+                        events={initialEvents}
+                        eventClassNames={eventClassNames}
+                        handleEventClick={handleEventClick}
+                    />
+
                 <div className="flex justify-end mt-4">
                     <button
                         className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition ${

@@ -61,26 +61,44 @@ export function Sidenav({ routes }) {
                       </Typography>
                     </li>
                 )}
-                {pages.map(({ icon, name, path }) => (
+                {pages.map(({ icon, name, path, onClick }) => (
                     <li key={name} className="border-b border-white/20 py-1">
-                      <NavLink to={path}>
-                        {({ isActive }) => (
-                            <Button
-                                variant="text"
-                                className={`flex items-center gap-4 px-5 py-3 rounded-lg transition-all text-lg ${
-                                    isActive ? "bg-white text-[#0db0bb] shadow-md" : "text-white hover:bg-[#0a99a1] hover:shadow-md"
-                                }`}
-                                fullWidth
-                            >
-                              {icon}
-                              <Typography className="font-semibold capitalize">
-                                {name}
-                              </Typography>
-                            </Button>
-                        )}
-                      </NavLink>
+                      {path ? (
+                          <NavLink to={path}>
+                            {({ isActive }) => (
+                                <Button
+                                    variant="text"
+                                    onClick={onClick}
+                                    className={`flex items-center gap-4 px-5 py-3 rounded-lg transition-all text-lg ${
+                                        isActive
+                                            ? "bg-white text-[#0db0bb] shadow-md"
+                                            : "text-white hover:bg-[#0a99a1] hover:shadow-md"
+                                    }`}
+                                    fullWidth
+                                >
+                                  {icon}
+                                  <Typography className="font-semibold capitalize">
+                                    {name}
+                                  </Typography>
+                                </Button>
+                            )}
+                          </NavLink>
+                      ) : (
+                          <Button
+                              variant="text"
+                              onClick={onClick}
+                              className="flex items-center gap-4 px-5 py-3 rounded-lg transition-all text-lg text-white hover:bg-[#0a99a1] hover:shadow-md"
+                              fullWidth
+                          >
+                            {icon}
+                            <Typography className="font-semibold capitalize">
+                              {name}
+                            </Typography>
+                          </Button>
+                      )}
                     </li>
                 ))}
+
               </ul>
           ))}
         </div>

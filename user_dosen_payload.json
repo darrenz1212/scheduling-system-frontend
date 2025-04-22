@@ -1,0 +1,234 @@
+[
+    {
+        "id": "730049",
+        "username": "Adelia",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "720062",
+        "username": "BERNARD RENALDY SUTEJA",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720212",
+        "username": "Daniel Jahja Surjawan",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720211",
+        "username": "Diana Trivena Y",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "710003",
+        "username": "Djoni Setiawan K., S.T., M.T.",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "730009",
+        "username": "Doro Edi",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "720247",
+        "username": "Erico",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "710004",
+        "username": "Hapnes Toba",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "720001",
+        "username": "Hendra Bunyamin",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720286",
+        "username": "Julianti Kasih",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720282",
+        "username": "Andreas Widjaja",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720225",
+        "username": "Meliana Christianti J., S. Kom., M.T.",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720302",
+        "username": "Maresha Caroline Wijanto, S.Kom., M.T., Ph.D.",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720140",
+        "username": "Mewati Ayub",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720309",
+        "username": "Oscar Karnalim",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720303",
+        "username": "Wenny Franciska Senjaya, S.Kom., M.T., Ph.D.",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "710001",
+        "username": "Risal",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "730001",
+        "username": "Radiant",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "720307",
+        "username": "Robby Tan, S.T., M.Kom.",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720319",
+        "username": "Rossevine Artha Nathasya",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "730062",
+        "username": "Sendy Ferdian Sujadi",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "73011",
+        "username": "Setia Budi",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "720317",
+        "username": "Swat Lie",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "710096",
+        "username": "Sulaeman Santoso",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "720004",
+        "username": "Ir. Teddy Marcus Zakaria, MT.",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720080",
+        "username": "Tjatur Kandaga G",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "720246",
+        "username": "Timotius Witono",
+        "password": "123",
+        "status": true,
+        "prodi": 1,
+        "role": 3
+    },
+    {
+        "id": "710071",
+        "username": "Tiur Gantini",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    },
+    {
+        "id": "730015",
+        "username": "Dr. Niko Ibrahim, S.Kom., M.T.",
+        "password": "123",
+        "status": true,
+        "prodi": 2,
+        "role": 3
+    }
+]

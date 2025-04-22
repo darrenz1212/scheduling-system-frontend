@@ -17,6 +17,8 @@ export const handleLogin = async (id, password, dispatch, navigate) => {
             navigate("/dosen/home");
         } else if(data.user.role === "Prodi"){
             navigate('/prodi/home')
+        }else if(data.user.role === "Admin"){
+            navigate('/admin/home')
         }
         return data;
     } catch (error) {

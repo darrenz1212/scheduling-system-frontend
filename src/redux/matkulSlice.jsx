@@ -15,7 +15,12 @@ const matkulSlice = createSlice({
         data: [],
         loading: false,
     },
-    reducers: {},
+    reducers: {
+        clearMatkul: (state) => {
+            state.data = [];
+            state.loading = false;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchMatkulList.pending, (state) => {
@@ -32,3 +37,5 @@ const matkulSlice = createSlice({
 });
 
 export default matkulSlice.reducer;
+export const { clearMatkul } = matkulSlice.actions;
+

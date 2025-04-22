@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { AddMatkul, fetchDosenList } from "../../../api/course/activeCourseService";
 import { fetchAllMatkul } from "../../../api/course/allCourseService.js";
 import { useDispatch } from "react-redux";
-import { setDosenList, clearDosenList } from "../../../redux/dosenSlice"; // sesuaikan path
+import { setDosenList, clearDosenList } from "../../../redux/dosenSlice";
+import { fetchAllPeriode } from "../../../api/periodeService.js";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 export const useAddPeriodWizard = () => {
     const [allCourses, setAllCourses] = useState([]);
@@ -13,8 +16,11 @@ export const useAddPeriodWizard = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [periodeList, setPeriodeList] = useState([]);
+    const [selectedPeriodeId, setSelectedPeriodeId] = useState("");
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -31,7 +37,23 @@ export const useAddPeriodWizard = () => {
         fetchCourses();
     }, []);
 
-    // Fetch dosen
+    useEffect(() => {
+        const fetchPeriodeList = async () => {
+            try {
+                const response = await fetchAllPeriode();
+                const list = Array.isArray(response) ? response : response.result || [];
+                setPeriodeList(list);
+
+                const aktif = list.find(p => p.active);
+                if (aktif) setSelectedPeriodeId(aktif.id);
+            } catch (err) {
+                console.error("Gagal fetch periode:", err);
+                setPeriodeList([]);
+            }
+        };
+        if (step === 2) fetchPeriodeList();
+    }, [step]);
+
     useEffect(() => {
         const fetchAndStoreDosen = async () => {
             try {
@@ -98,28 +120,76 @@ export const useAddPeriodWizard = () => {
         setSubmitting(true);
         setError(null);
         try {
-            for (const payload of wizardData) {
-                await AddMatkul({
-                    id_matkul: payload.id,
-                    sks: payload.sks,
-                    praktikum: false,
-                    dosen: payload.dosen,
-                    kelas: payload.kelas,
-                    periode: 4,
-                });
+            // 1. Tampilkan dialog pemilihan periode
+            const { value: selectedId } = await Swal.fire({
+                title: "Pilih Periode",
+                html: `
+                <select id="periodeSelect" class="swal2-select" style="width: 100%; padding: 8px; border-radius: 5px;">
+                    ${periodeList
+                    .map(p => `<option value="${p.id}">${p.nama} ${p.active ? "(Aktif)" : ""}</option>`)
+                    .join("")}
+                </select>
+            `,
+                confirmButtonText: "Tambahkan",
+                focusConfirm: false,
+                preConfirm: () => {
+                    const selected = document.getElementById("periodeSelect").value;
+                    if (!selected) {
+                        Swal.showValidationMessage("Silakan pilih periode.");
+                    }
+                    return selected;
+                },
+            });
 
-                if (payload.enablePraktikum && payload.sks_praktikum) {
-                    await AddMatkul({
+            if (!selectedId) {
+                setSubmitting(false);
+                return;
+            }
+
+            // 2. Simpan ke database
+            console.log("DATA YANG DIKIRIM KE DATABASE:");
+            for (const payload of wizardData) {
+                if (!Array.isArray(payload.kelasList)) continue;
+
+                for (const kelasObj of payload.kelasList) {
+                    const mainPayload = {
                         id_matkul: payload.id,
-                        sks: payload.sks_praktikum,
-                        praktikum: true,
-                        dosen: payload.dosen,
-                        kelas: payload.kelas,
-                        periode: 4,
-                    });
+                        sks: payload.sks,
+                        praktikum: false,
+                        dosen: kelasObj.dosen,
+                        kelas: kelasObj.kelas,
+                        periode: selectedId,
+                    };
+
+                    console.log("Matkul Teori:", mainPayload);
+                    await AddMatkul(mainPayload);
+
+                    if (payload.enablePraktikum && payload.sks_praktikum) {
+                        const praktikumPayload = {
+                            id_matkul: payload.id,
+                            sks: payload.sks_praktikum,
+                            praktikum: true,
+                            dosen: kelasObj.dosen,
+                            kelas: kelasObj.kelas,
+                            periode: selectedId,
+                        };
+
+                        console.log("Matkul Praktikum:", praktikumPayload);
+                        await AddMatkul(praktikumPayload);
+                    }
                 }
             }
 
+            await Swal.fire({
+                icon: "success",
+                title: "Berhasil!",
+                text: "Mata kuliah berhasil ditambahkan ke periode.",
+                confirmButtonColor: "#3085d6",
+            });
+
+            navigate("/prodi/course");
+
+            // Reset wizard
             setStep(1);
             setSelectedCourseIds([]);
             setWizardData([]);
@@ -131,6 +201,7 @@ export const useAddPeriodWizard = () => {
             setSubmitting(false);
         }
     };
+
 
     return {
         step,
@@ -148,5 +219,8 @@ export const useAddPeriodWizard = () => {
         submitting,
         error,
         setStep,
+        periodeList,
+        selectedPeriodeId,
+        setSelectedPeriodeId,
     };
 };

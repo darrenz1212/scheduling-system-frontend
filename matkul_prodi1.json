@@ -1,0 +1,260 @@
+[
+    {
+        "id": "IN220",
+        "nama_matkul": "Dasar Pemrograman",
+        "semester": "2",
+        "prodi": 1
+    },
+    {
+        "id": "IN212",
+        "nama_matkul": "Web Dasar",
+        "semester": "2",
+        "prodi": 1
+    },
+    {
+        "id": "IN221",
+        "nama_matkul": "Arsitektur dan Keamanan Jaringan",
+        "semester": "2",
+        "prodi": 1
+    },
+    {
+        "id": "IN044",
+        "nama_matkul": "Jaringan Komputer 2",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "IN222",
+        "nama_matkul": "Arsitektur Komputer Modern",
+        "semester": "2",
+        "prodi": 1
+    },
+    {
+        "id": "IN223",
+        "nama_matkul": "Aljabar Linier",
+        "semester": "2",
+        "prodi": 1
+    },
+    {
+        "id": "IN023",
+        "nama_matkul": "Aljabar Linier dan Matriks",
+        "semester": "2",
+        "prodi": 1
+    },
+    {
+        "id": "IN224",
+        "nama_matkul": "Desain Basis Data",
+        "semester": "2",
+        "prodi": 1
+    },
+    {
+        "id": "IN217",
+        "nama_matkul": "Teknik Komunikasi Bahasa Inggris",
+        "semester": "2",
+        "prodi": 1
+    },
+    {
+        "id": "IN233",
+        "nama_matkul": "Algoritma dan Struktur Data",
+        "semester": "3",
+        "prodi": 1
+    },
+    {
+        "id": "IN234",
+        "nama_matkul": "Paradigma Pemrograman",
+        "semester": "3",
+        "prodi": 1
+    },
+    {
+        "id": "IN041",
+        "nama_matkul": "Pemrograman Berorientasi Objek 1 B*)   kelas A)",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "MK017",
+        "nama_matkul": "Pancasila",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "MK024",
+        "nama_matkul": "Pendidikan Kewarganegaraan",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "IN240",
+        "nama_matkul": "Pemrograman Web Lanjut",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "IN052",
+        "nama_matkul": "Pemrograman Web 2   kelas B)",
+        "semester": "5",
+        "prodi": 1
+    },
+    {
+        "id": "IN241",
+        "nama_matkul": "Statistika",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "IN046",
+        "nama_matkul": "Statistika",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "IN242",
+        "nama_matkul": "Kecerdasan Mesin",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "IN060",
+        "nama_matkul": "Pengantar Kecerdasan Buatan   kelas A)",
+        "semester": "6",
+        "prodi": 1
+    },
+    {
+        "id": "IN244",
+        "nama_matkul": "Strategi Algoritmik",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "IN235",
+        "nama_matkul": "Pola Desain Perangkat Lunak",
+        "semester": "4",
+        "prodi": 1
+    },
+    {
+        "id": "IN076",
+        "nama_matkul": "Pola Desain Perangkat Lunak   kelas C)",
+        "semester": "2014",
+        "prodi": 1
+    },
+    {
+        "id": "IN252",
+        "nama_matkul": "Desain Antarmuka",
+        "semester": "6",
+        "prodi": 1
+    },
+    {
+        "id": "IN061",
+        "nama_matkul": "Desain Antarmuka Pengguna",
+        "semester": "6",
+        "prodi": 1
+    },
+    {
+        "id": "IN260",
+        "nama_matkul": "Metode Penelitian Informatika",
+        "semester": "6",
+        "prodi": 1
+    },
+    {
+        "id": "IN062",
+        "nama_matkul": "Metode Penelitian Informatika",
+        "semester": "6",
+        "prodi": 1
+    },
+    {
+        "id": "IN261",
+        "nama_matkul": "Start-up Technopreneur",
+        "semester": "6",
+        "prodi": 1
+    },
+    {
+        "id": "IN270",
+        "nama_matkul": "Kerja Praktik",
+        "semester": "7",
+        "prodi": 1
+    },
+    {
+        "id": "IN065",
+        "nama_matkul": "Kerja Praktik",
+        "semester": "6",
+        "prodi": 1
+    },
+    {
+        "id": "IN280",
+        "nama_matkul": "Seminar Tugas Akhir",
+        "semester": "8",
+        "prodi": 1
+    },
+    {
+        "id": "IN070",
+        "nama_matkul": "Seminar Tugas Akhir",
+        "semester": "7",
+        "prodi": 1
+    },
+    {
+        "id": "IN281",
+        "nama_matkul": "Tugas Akhir",
+        "semester": "8",
+        "prodi": 1
+    },
+    {
+        "id": "IN080",
+        "nama_matkul": "Tugas Akhir",
+        "semester": "8",
+        "prodi": 1
+    },
+    {
+        "id": "IN271",
+        "nama_matkul": "Internet of Things",
+        "semester": "8",
+        "prodi": 1
+    },
+    {
+        "id": "IN288",
+        "nama_matkul": "AI Computing Platform",
+        "semester": "8",
+        "prodi": 1
+    },
+    {
+        "id": "INF294202272",
+        "nama_matkul": "Digital Marketing",
+        "semester": "8",
+        "prodi": 1
+    },
+    {
+        "id": "IN293",
+        "nama_matkul": "Analisis Data Kesehatan",
+        "semester": "8",
+        "prodi": 1
+    },
+    {
+        "id": "MK037",
+        "nama_matkul": "Kepemimpinan",
+        "semester": "7",
+        "prodi": 1
+    },
+    {
+        "id": "IN237",
+        "nama_matkul": "Basis Data Lanjut",
+        "semester": "3",
+        "prodi": 1
+    },
+    {
+        "id": "IN236",
+        "nama_matkul": "Pemrograman Terapan",
+        "semester": "5",
+        "prodi": 1
+    },
+    {
+        "id": "IN250",
+        "nama_matkul": "Manajemen Proyek",
+        "semester": "5",
+        "prodi": 1
+    },
+    {
+        "id": "IN253",
+        "nama_matkul": "Grafika Komputer",
+        "semester": "5",
+        "prodi": 1
+    }
+]

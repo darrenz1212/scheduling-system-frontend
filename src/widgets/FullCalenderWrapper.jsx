@@ -3,6 +3,8 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import PropTypes from "prop-types";
+import Swal from "sweetalert2";
+
 
 const dayMapping = {
     monday: 1,
@@ -33,7 +35,9 @@ const convertToFixedTimetable = (events) => {
             start: `${formattedDate}T${time}`,
             end: event.end ? `${formattedDate}T${event.end.split("T")[1]}` : undefined,
             color: event.color || "bg-gray-500",
+            meta: event.meta
         };
+
 
 
         return convertedEvent;
@@ -57,6 +61,7 @@ const FullCalendarWrapper = ({ events, handleEventClick, eventClassNames  }) => 
         editable: false,
         weekends: false,
         events: formattedEvents,
+        height: 600,
         validRange: {
             start: "2024-01-01",
             end: "2024-01-06",

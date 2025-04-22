@@ -14,6 +14,8 @@ import ScheduleDosen from "./pages/dosen/scheduleDosen.jsx";
 import AddSchedule from "./pages/dosen/pickAvailableSchedule.jsx";
 import LectureAvailabilitySchedule from "./pages/prodi/lectureAvailabilitySchedule.jsx";
 import Course from "./pages/prodi/course/course.jsx";
+import AdminHome from './pages/admin/home.jsx'
+import SchedulePage from "./pages/prodi/schedule/schedulePage.jsx";
 
 const router = createBrowserRouter([
     // ============================== Auth ==============================
@@ -46,11 +48,16 @@ const router = createBrowserRouter([
     {
         path : 'prodi/course',
         element : <Course/>
+    },
+    {
+        path : 'prodi/schedule',
+        element : <SchedulePage/>
+    },
+    // ============================== Admin ==============================
+    {
+        path : 'admin/home',
+        element :<AdminHome/>
     }
-    // {
-    //     path : "lp",
-    //     element : <LandingPage/>
-    // }
 ]);
 
 createRoot(document.getElementById("root")).render(

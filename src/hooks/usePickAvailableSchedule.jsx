@@ -28,56 +28,58 @@ export const usePickAvailableSchedule = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (user.id) {
-                if (matkulFromStore.length === 0) {
-                    dispatch(fetchMatkulList(user.id));
-                }
-                const existingSchedules = await dosenAvailableSchedule(user.id);
+            if (!user.id) return;
 
-                if (existingSchedules && existingSchedules.length > 0) {
-                    const dayMap = {
-                        1: "monday",
-                        2: "tuesday",
-                        3: "wednesday",
-                        4: "thursday",
-                        5: "friday",
-                        6: "saturday",
-                        7: "sunday",
+            // hanya dispatch jika data matkul belum ada
+            if (matkulFromStore.length === 0) {
+                dispatch(fetchMatkulList(user.id));
+                return;
+            }
+
+            const existingSchedules = await dosenAvailableSchedule(user.id);
+
+            if (existingSchedules && existingSchedules.length > 0) {
+                const dayMap = {
+                    1: "monday",
+                    2: "tuesday",
+                    3: "wednesday",
+                    4: "thursday",
+                    5: "friday",
+                    6: "saturday",
+                    7: "sunday",
+                };
+
+                const mappedEvents = existingSchedules.map((item, index) => {
+                    const foundMatkul = matkulFromStore.find(
+                        (m) => m.id === item.matkul_preferensi
+                    );
+
+                    const namaMatkul = foundMatkul?.MataKuliah?.nama_matkul || " ";
+                    const idMatkul = foundMatkul?.id_matkul || " ";
+                    const isPraktikum = foundMatkul?.praktikum ? " (praktikum)" : "";
+
+                    return {
+                        id: `${item.id}-${index}`,
+                        title: `${idMatkul} ${namaMatkul}${isPraktikum}`,
+                        start: `${dayMap[item.hari]}T${item.jam_mulai}`,
+                        end: `${dayMap[item.hari]}T${item.jam_akhir}`,
+                        color: "bg-green-600",
                     };
+                });
 
-                    const mappedEvents = existingSchedules.map((item, index) => {
-                        const foundMatkul = matkulFromStore.find(
-                            (m) => m.id === item.matkul_preferensi
-                        );
-
-                        const namaMatkul = foundMatkul?.MataKuliah?.nama_matkul || " ";
-                        const idMatkul = foundMatkul?.id_matkul || " ";
-                        const isPraktikum = foundMatkul?.praktikum ? " (praktikum)" : "";
-
-                        return {
-                            id: `${item.id}-${index}`,
-                            title: `${idMatkul} ${namaMatkul}${isPraktikum}`,
-                            start: `${dayMap[item.hari]}T${item.jam_mulai}`,
-                            end: `${dayMap[item.hari]}T${item.jam_akhir}`,
-                            color: "bg-green-600",
-                        };
-                    });
-
-                    setCalendarEvents(mappedEvents);
-                    setTitle(`Jadwal ketersediaan mengajar ${user.username}`);
-                } else {
-                    setCalendarEvents(initialEvents);
-                    setTitle("Silahkan pilih jadwal ketersediaan mengajar");
-                }
+                setCalendarEvents(mappedEvents);
+                setTitle(`Jadwal ketersediaan mengajar ${user.username}`);
+            } else {
+                setCalendarEvents(initialEvents);
+                setTitle("Silahkan pilih jadwal ketersediaan mengajar");
             }
         };
 
         fetchData();
-    }, [user.id, matkulFromStore]);
+    }, [user.id, matkulFromStore]); // ← tetap gunakan ini agar fetch ulang saat matkul store update
+
 
     const handleEventClick = (info) => {
-        info.jsEvent.preventDefault();
-        info.jsEvent.stopPropagation();
 
         setHighlightedEvents((prev) => {
             const newEvents = { ...prev };

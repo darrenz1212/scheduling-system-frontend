@@ -2,6 +2,7 @@ import React from "react";
 import ProdiNav from "../prodiNav.jsx";
 import { useActiveCourse } from "../../../hooks/prodi/course/useActiveCourse.jsx";
 import AddPeriodWizard from "../../../component/prodi/addPeriodWizard.jsx";
+// import {useSelector} from "react-redux";
 
 const ActiveCourse = () => {
     const {
@@ -12,11 +13,6 @@ const ActiveCourse = () => {
         setSelectedPeriode,
         showAddModal,
         setShowAddModal,
-        formData,
-        handleInputChange,
-        handleSubmit,
-        loadingAdd,
-        errorAdd,
     } = useActiveCourse();
 
     return (
@@ -47,9 +43,6 @@ const ActiveCourse = () => {
                         >
                             Tambah Periode
                         </button>
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                            Edit Periode
-                        </button>
                     </div>
                 </div>
 
@@ -67,6 +60,9 @@ const ActiveCourse = () => {
                                 <th className="p-3 border-b">Semester</th>
                                 <th className="p-3 border-b">Dosen</th>
                                 <th className="p-3 border-b">Periode</th>
+                                <th>
+                                    Action
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -82,6 +78,12 @@ const ActiveCourse = () => {
                                     <td className="p-3">{item.MataKuliah?.semester}</td>
                                     <td className="p-3">{item.User?.username}</td>
                                     <td className="p-3">{item.Periode?.nama}</td>
+                                    <td>
+                                        <button
+                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                                            Edit
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                             </tbody>
@@ -89,9 +91,8 @@ const ActiveCourse = () => {
                     </div>
                 )}
             </div>
+            {showAddModal && <AddPeriodWizard setShowAddModal={setShowAddModal} />}
 
-            {/* Render wizard modal saat showAddModal true */}
-            {showAddModal && <AddPeriodWizard />}
         </div>
     );
 };

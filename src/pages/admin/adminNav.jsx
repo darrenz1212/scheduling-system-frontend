@@ -4,8 +4,7 @@ import { clearMatkul } from "../../redux/matkulSlice.jsx"
 import { useNavigate } from "react-router-dom";
 import Sidenav from "../../widgets/layout/sidenav.jsx";
 
-
-export default function DosenNav() {
+export default function AdminNav() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -19,7 +18,7 @@ export default function DosenNav() {
         {
             title: "Main Menu",
             pages: [
-                { name: "My Schedule", path: "/dosen/schedule" },
+                { name: "List User", path: "/admin/home" },
                 { name: "Pick Schedule", path: "/dosen/addschedule" },
                 { name: "ScheduleDosen History", path: "/tables" },
             ],
@@ -29,7 +28,7 @@ export default function DosenNav() {
             pages: [
                 {
                     name: "Log Out",
-                    path: "#",
+                    path: null,
                     onClick: handleLogout,
                 },
             ],

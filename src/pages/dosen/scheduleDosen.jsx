@@ -1,29 +1,37 @@
-import React from "react";
-import FullCalendarWrapper from "../../widgets/FullCalenderWrapper.jsx";
-import DosenNav from "./dosenNav.jsx";
-import {useSelector} from "react-redux";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/authSlice";
+import { useNavigate } from "react-router-dom";
+import Sidenav from "../../widgets/layout/sidenav.jsx";
 
-const ScheduleDosen = () => {
-    const events = [
-        { title: "Kuliah AI", start: "mondayT08:00:00", end: "mondayT10:00:00" },
-        { title: "Praktikum Jaringan", start: "tuesdayT10:00:00", end: "tuesdayT12:00:00" },
-        { title: "Rapat Proyek", start: "thursdayT13:00:00", end: "thursdayT14:30:00" },
-        { title: "Metode Penelitian", start: "fridayT13:00:00", end: "fridayT14:30:00" },
+export default function DosenNav() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate("/");
+    };
+
+    const routes = [
+        {
+            title: "Main Menu",
+            pages: [
+                { name: "My Schedule", path: "/dosen/schedule" },
+                { name: "Pick Schedule", path: "/dosen/addschedule" },
+                { name: "ScheduleDosen History", path: "/tables" },
+            ],
+        },
+        {
+            title: "Auth Pages",
+            pages: [
+                {
+                    name: "Log Out",
+                    path: "#",
+                    onClick: handleLogout,
+                },
+            ],
+        },
     ];
 
-    const user = useSelector(
-    (state) => state.auth.user
-    )
-
-    return (
-        <div className="flex justify-end w-full h-screen bg-gray-100 p-6">
-            <DosenNav/>
-            <div className="mr-20 w-8/12 max-w-7xl bg-white shadow-lg rounded-lg p-4">
-                <h2 className="text-xl font-semibold text-center mb-4">Timetable Mingguan {user.username}</h2>
-                <FullCalendarWrapper events={events} />
-            </div>
-        </div>
-    );
-};
-
-export default ScheduleDosen;
+    return <Sidenav brandName="Material Tailwind React" routes={routes} />;
+}
