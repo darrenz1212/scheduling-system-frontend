@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchMatkulByPeriod, AddMatkul } from "../../../api/course/activeCourseService";
+import { fetchMatkulByPeriod, AddMatkul } from "../../../api/course/matkulAktif.js";
 import { fetchAllPeriode } from "../../../api/periodeService";
 
 export const useActiveCourse = () => {

@@ -5,7 +5,6 @@ const routes = [
         title: "Main Menu",
         pages: [
             { name: "Jadwal", path: "/prodi/schedule" },
-            { name: "Buat Jadwal", path: "/tables"},
             { name: "Ketersediaan Mengajar", path: "/prodi/dosen-schedule" },
             { name: "Mata Kuliah", path: "/prodi/course"},
             { name: "Periode", path: "/tables"},

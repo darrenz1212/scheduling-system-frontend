@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
-import { fetchJadwal } from "../../api/prodi/prodiService.js";
+import { fetchJadwal, generateSchedule, addJadwal } from "../../api/prodi/scheduleService.js";
+// import {fetchActivePeriod} from"../../api/periodeService.js"
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 export const useScheduleSystem = (customEventClick = null) => {
+    const user = useSelector((state) => state.auth.user);
     const [jadwal, setJadwal] = useState([]);
     const [semesterOptions, setSemesterOptions] = useState([]);
     const [selectedSemester, setSelectedSemester] = useState("1");
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
+    const [isEmpty, setIsEmpty] = useState(false);
 
     const handleEventClick = (info) => {
         if (typeof customEventClick === "function") {
@@ -34,27 +38,90 @@ export const useScheduleSystem = (customEventClick = null) => {
         });
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetchJadwal();
-                const data = (res?.data || []).filter(item =>
-                    item?.MatkulAktif?.MataKuliah?.semester
-                );
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            console.log(user.prodi);
+            const res = await fetchJadwal(user.prodi); // ⬅️ user.prodi dikirim benar ke params
+            console.log(res);
+            const data = (res?.data || []).filter(item =>
+                item?.MatkulAktif?.MataKuliah?.semester
+            );
 
-                setJadwal(data);
+            setJadwal(data);
 
+            if (data.length === 0) {
+                setIsEmpty(true);
+            } else {
+                setIsEmpty(false);
                 const semesters = Array.from(
                     new Set(data.map(d => d.MatkulAktif.MataKuliah.semester))
                 );
                 setSemesterOptions(semesters.sort((a, b) => parseInt(a) - parseInt(b)));
-                setLoading(false);
-            } catch (error) {
-                console.error("Failed to fetch jadwal:", error);
-                setLoading(false);
             }
-        };
 
+            setLoading(false);
+        } catch (error) {
+            console.error("Failed to fetch jadwal:", error);
+            setLoading(false);
+        }
+    };
+
+
+    const generateAndAddSchedule = async () => {
+        const confirm = await Swal.fire({
+            title: "Generate Jadwal Baru?",
+            text: "Proses ini akan membuat jadwal otomatis. Lanjutkan?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#0db0bb",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Generate",
+            cancelButtonText: "Batal"
+        });
+
+        if (confirm.isConfirmed) {
+            try {
+                Swal.fire({
+                    title: "Sedang memproses...",
+                    html: "Generate jadwal mungkin memerlukan beberapa detik. Mohon tunggu.",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const generated = await generateSchedule(user.prodi);
+                if (!generated || !generated.data) throw new Error("Gagal generate jadwal");
+                console.log(generated.data)
+                const added = await addJadwal(generated);
+                if (!added) throw new Error("Gagal menambahkan jadwal");
+
+
+                Swal.fire({
+                    title: "Berhasil!",
+                    text: "Jadwal berhasil digenerate dan disimpan.",
+                    icon: "success",
+                    confirmButtonColor: '#0db0bb'
+                });
+
+                fetchData(); // ⬅️ Reload data setelah sukses
+            } catch (error) {
+                console.error("Error saat generate dan tambah jadwal", error);
+                // 🔥 Kalau error
+                Swal.fire({
+                    title: "Gagal!",
+                    text: error.message || "Terjadi kesalahan saat generate jadwal.",
+                    icon: "error",
+                    confirmButtonColor: '#0db0bb'
+                });
+            }
+        }
+    };
+
+
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -93,6 +160,8 @@ export const useScheduleSystem = (customEventClick = null) => {
         selectedSemester,
         setSelectedSemester,
         loading,
-        handleEventClick // auto-include built-in or custom click handler
+        handleEventClick,
+        isEmpty,
+        generateAndAddSchedule
     };
 };

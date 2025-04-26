@@ -21,7 +21,6 @@ export default function DosenNav() {
             pages: [
                 { name: "My Schedule", path: "/dosen/schedule" },
                 { name: "Pick Schedule", path: "/dosen/addschedule" },
-                { name: "ScheduleDosen History", path: "/tables" },
             ],
         },
         {

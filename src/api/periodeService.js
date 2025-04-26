@@ -10,3 +10,12 @@ export const fetchAllPeriode = async () => {
   }
 }
 
+export const fetchActivePeriod = async () =>{
+    try {
+        const response = await api.get('/api/prodi/periode/active')
+        return response.data
+    }catch (error){
+        console.error(error)
+        throw error
+    }
+}

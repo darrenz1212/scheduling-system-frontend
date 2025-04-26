@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AddMatkul, fetchDosenList } from "../../../api/course/activeCourseService";
+import { AddMatkul, fetchDosenList } from "../../../api/course/matkulAktif.js";
 import { fetchAllMatkul } from "../../../api/course/allCourseService.js";
 import { useDispatch } from "react-redux";
 import { setDosenList, clearDosenList } from "../../../redux/dosenSlice";

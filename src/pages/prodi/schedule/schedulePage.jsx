@@ -2,7 +2,6 @@ import React from "react";
 import ProdiNav from "../prodiNav.jsx";
 import FullCalendarWrapper from "../../../widgets/FullCalenderWrapper.jsx";
 import { useScheduleSystem } from "../../../hooks/prodi/useScheduleSystem.jsx";
-import Swal from "sweetalert2";
 
 const SchedulePage = () => {
     const {
@@ -11,16 +10,17 @@ const SchedulePage = () => {
         selectedSemester,
         setSelectedSemester,
         loading,
-        handleEventClick
+        handleEventClick,
+        isEmpty,
+        generateAndAddSchedule
     } = useScheduleSystem();
-
 
     return (
         <div className="flex flex-col w-full h-screen bg-gray-100 p-6 relative">
             <ProdiNav />
             <div className="ml-auto mr-20 w-7/12 max-w-5xl bg-white shadow-lg rounded-lg p-4">
                 <h2 className="text-xl font-semibold text-center mb-4">
-                    Jadwal Perkuliahan Berdasarkan Semester
+                    Jadwal Perkuliahan
                 </h2>
 
                 {/* Select Box Semester */}
@@ -41,9 +41,19 @@ const SchedulePage = () => {
                     </select>
                 </div>
 
-                {/* Calendar */}
+                {/* Content */}
                 {loading ? (
                     <p className="text-center text-gray-500">Loading...</p>
+                ) : isEmpty ? (
+                    <div className="text-center space-y-4">
+                        <p className="text-gray-700">Belum ada jadwal pada periode ini.</p>
+                        <button
+                            onClick={generateAndAddSchedule}
+                            className="bg-[#0db0bb] text-white px-6 py-2 rounded-lg hover:bg-[#0aa2a8] transition"
+                        >
+                            Generate Jadwal Sekarang
+                        </button>
+                    </div>
                 ) : (
                     <FullCalendarWrapper events={events} handleEventClick={handleEventClick} />
                 )}
