@@ -28,9 +28,8 @@ export const initialEvents = [
     { id: "20", title: " ", start: "thursdayT17:30:00", end: "thursdayT22:00:00", color: "bg-yellow-500" },
 
     // Jumat
-    { id: "21", title: " ", start: "fridayT07:30:00", end: "fridayT09:30:00", color: "bg-red-500" },
-    { id: "22", title: " ", start: "fridayT09:30:00", end: "fridayT12:00:00", color: "bg-yellow-500" },
-    { id: "23", title: " ", start: "fridayT13:00:00", end: "fridayT15:30:00", color: "bg-yellow-500" },
-    { id: "24", title: " ", start: "fridayT15:30:00", end: "fridayT18:00:00", color: "bg-yellow-500" },
-    { id: "25", title: " ", start: "fridayT18:00:00", end: "fridayT20:30:00", color: "bg-yellow-500" },
+    { id: "21", title: " ", start: "fridayT07:30:00", end: "fridayT09:00:00", color: "bg-red-500" },
+    { id: "22", title: " ", start: "fridayT13:00:00", end: "fridayT15:30:00", color: "bg-yellow-500" },
+    { id: "23", title: " ", start: "fridayT15:30:00", end: "fridayT18:00:00", color: "bg-yellow-500" },
+    { id: "24", title: " ", start: "fridayT18:00:00", end: "fridayT20:30:00", color: "bg-yellow-500" },
 ];

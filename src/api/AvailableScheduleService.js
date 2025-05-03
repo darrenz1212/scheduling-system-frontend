@@ -40,6 +40,15 @@ export const updateAvailableSchedule = async (idJadwal, updatedData) => {
     }
 };
 
+export const editAlokasiProdi = async (idJadwal, updatedData) => {
+    try {
+        const response = await api.put(`/api/prodi/jadwal/${idJadwal}`, updatedData);
+        return response.data;
+    } catch (error) {
+        console.error("Error in updateAvailableSchedule:", error.response?.data || error.message);
+        throw error;
+    }
+};
 export const fetchAllAvailableSchedule = async ()=>{
     try {
         const response = await api.get(`/api/prodi/jadwaldosen`)

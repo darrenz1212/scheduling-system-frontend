@@ -18,7 +18,8 @@ const PickAvailableSchedule = () => {
         handleSubmit,
         loading,
         formatScheduleLabel,
-        title
+        title,
+        hasMatkulAssigned
     } = usePickAvailableSchedule();
 
     const matkulOptions = useSelector((state) => state.matkul.data);
@@ -34,11 +35,30 @@ const PickAvailableSchedule = () => {
                 <h2 className="text-xl font-semibold text-center mb-4">
                     Silahkan pilih jadwal ketersediaan mengajar
                 </h2>
-                    <FullCalendarWrapper
-                        events={initialEvents}
-                        eventClassNames={eventClassNames}
-                        handleEventClick={handleEventClick}
-                    />
+                {!hasMatkulAssigned ? (
+                    <div className="text-center text-gray-500 py-20">
+                        Anda tidak memiliki jadwal mengajar di periode ini.
+                    </div>
+                ) : (
+                    <>
+                        <FullCalendarWrapper
+                            events={initialEvents}
+                            eventClassNames={eventClassNames}
+                            handleEventClick={handleEventClick}
+                        />
+                        <div className="flex justify-end mt-4">
+                            <button
+                                className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition ${
+                                    Object.keys(highlightedEvents).length === 0 ? "opacity-50 cursor-not-allowed" : ""
+                                }`}
+                                onClick={handleNextClick}
+                                disabled={Object.keys(highlightedEvents).length === 0}
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </>
+                )}
 
                 <div className="flex justify-end mt-4">
                     <button

@@ -40,6 +40,7 @@ const convertToFixedTimetable = (events) => {
 
 
 
+
         return convertedEvent;
     }).filter(event => event !== null);
 };

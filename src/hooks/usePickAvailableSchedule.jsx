@@ -1,36 +1,32 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initialEvents } from "../pages/dosen/initEvent.jsx";
-import { addAvailableScheduleService, dosenAvailableSchedule} from "../api/AvailableScheduleService.js";
-import {fetchMatkulList} from "../redux/matkulSlice.jsx";
+import {
+    addAvailableScheduleService,
+    dosenAvailableSchedule,
+    updateAvailableSchedule
+} from "../api/AvailableScheduleService.js";
+import { fetchMatkulList } from "../redux/matkulSlice.jsx";
 import Swal from "sweetalert2";
-
 
 export const usePickAvailableSchedule = () => {
     const [highlightedEvents, setHighlightedEvents] = useState({});
     const [preferences, setPreferences] = useState({});
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    // const [matkulOptions, setMatkulOptions] = useState([]);
     const [calendarEvents, setCalendarEvents] = useState(initialEvents);
-    const [title,setTitle] = useState(" ")
+    const [title, setTitle] = useState(" ");
 
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const matkulFromStore = useSelector((state) => state.matkul.data);
 
-
-    console.log("redux : ",user.id)
-    console.log("matkul : ", matkulFromStore)
-
-    // setMatkulOptions(matkulFromStore)
-
+    const prodi = user.prodi;
 
     useEffect(() => {
         const fetchData = async () => {
             if (!user.id) return;
 
-            // hanya dispatch jika data matkul belum ada
             if (matkulFromStore.length === 0) {
                 dispatch(fetchMatkulList(user.id));
                 return;
@@ -60,10 +56,12 @@ export const usePickAvailableSchedule = () => {
 
                     return {
                         id: `${item.id}-${index}`,
+                        scheduleId: item.id,
                         title: `${idMatkul} ${namaMatkul}${isPraktikum}`,
                         start: `${dayMap[item.hari]}T${item.jam_mulai}`,
                         end: `${dayMap[item.hari]}T${item.jam_akhir}`,
                         color: "bg-green-600",
+                        prodi: item.prodi,
                     };
                 });
 
@@ -76,11 +74,9 @@ export const usePickAvailableSchedule = () => {
         };
 
         fetchData();
-    }, [user.id, matkulFromStore]); //
-
+    }, [user.id, matkulFromStore]);
 
     const handleEventClick = (info) => {
-
         setHighlightedEvents((prev) => {
             const newEvents = { ...prev };
             if (newEvents[info.event.id]) {
@@ -91,7 +87,6 @@ export const usePickAvailableSchedule = () => {
             return newEvents;
         });
     };
-
 
     const eventClassNames = ({ event }) => {
         return highlightedEvents[event.id] ? "bg-green-500 text-white" : event.extendedProps.color;
@@ -120,11 +115,10 @@ export const usePickAvailableSchedule = () => {
             thursday: 4,
             friday: 5,
         };
-
         return daysMapping[dayString.toLowerCase()] || 0;
     };
-    const formatScheduleLabel = (event) => {
 
+    const formatScheduleLabel = (event) => {
         const dayMap = {
             monday: "Senin",
             tuesday: "Selasa",
@@ -135,7 +129,6 @@ export const usePickAvailableSchedule = () => {
             sunday: "Minggu",
         };
 
-
         const dayPart = event.start.split("T")[0].toLowerCase();
         const timePartStart = event.start.split("T")[1].slice(0, 5);
         const timePartEnd = event.end ? event.end.split("T")[1].slice(0, 5) : "??:??";
@@ -143,32 +136,43 @@ export const usePickAvailableSchedule = () => {
 
         return `${dayName} ${timePartStart} - ${timePartEnd}`;
     };
+
     const handleSubmit = async () => {
         setLoading(true);
         try {
             const selectedSchedules = Object.keys(highlightedEvents).filter((id) => highlightedEvents[id]);
+
             for (const id of selectedSchedules) {
-                const selectedEvent = initialEvents.find((event) => event.id === id);
-                const dayString = selectedEvent.start.split("T")[0].toLowerCase();
+                const selectedEvent = calendarEvents.find((event) => event.id === id);
 
-                const formattedData = {
-                    dosen: user.id,
-                    matkul_preferensi: preferences[id] || null,
-                    hari: getDayNumber(dayString),
-                    jam_mulai: selectedEvent.start.split("T")[1],
-                    jam_akhir: selectedEvent.end ? selectedEvent.end.split("T")[1] : "00:00:00",
-                };
+                // jika event sudah ada di database (ada scheduleId), kita update prodi-nya saja
+                if (selectedEvent?.scheduleId) {
+                    await updateAvailableSchedule(selectedEvent.scheduleId, {
+                        prodi: selectedEvent.prodi === user.prodi ? null : user.prodi,
+                    });
+                } else {
+                    const dayString = selectedEvent.start.split("T")[0].toLowerCase();
 
-                await addAvailableScheduleService(formattedData);
+                    const formattedData = {
+                        dosen: user.id,
+                        matkul_preferensi: preferences[id] || null,
+                        hari: getDayNumber(dayString),
+                        jam_mulai: selectedEvent.start.split("T")[1],
+                        jam_akhir: selectedEvent.end ? selectedEvent.end.split("T")[1] : "00:00:00",
+                        prodi: prodi
+                    };
+
+                    await addAvailableScheduleService(formattedData);
+                }
             }
 
             Swal.fire({
                 icon: "success",
                 title: "Berhasil!",
-                text: "Jadwal berhasil ditambahkan!",
+                text: "Jadwal berhasil diperbarui!",
                 confirmButtonColor: "#10b981",
-            }).then(()=>{
-                window.location.reload()
+            }).then(() => {
+                window.location.reload();
             });
 
             setShowModal(false);
@@ -178,7 +182,7 @@ export const usePickAvailableSchedule = () => {
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: "Gagal menambahkan jadwal. Silakan coba lagi.",
+                text: "Gagal memperbarui jadwal. Silakan coba lagi.",
                 confirmButtonColor: "#ef4444",
             });
 
@@ -188,6 +192,7 @@ export const usePickAvailableSchedule = () => {
         }
     };
 
+    const hasMatkulAssigned = matkulFromStore.length > 0;
 
     return {
         highlightedEvents,
@@ -203,6 +208,7 @@ export const usePickAvailableSchedule = () => {
         loading,
         formatScheduleLabel,
         matkulOptions: matkulFromStore,
-        title
+        title,
+        hasMatkulAssigned
     };
 };
