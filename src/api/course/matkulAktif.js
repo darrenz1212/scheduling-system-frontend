@@ -40,3 +40,13 @@ export const fetchDosenList = async () => {
         throw error;
     }
 };
+
+export const updateMatkul = async (id, updatedData) => {
+    try {
+        const response = await api.put(`/api/prodi/matkul-aktif/id/${id}`, updatedData);
+        return response.data;
+    } catch (error) {
+        console.error("Gagal update matkul aktif:", error);
+        throw error;
+    }
+};

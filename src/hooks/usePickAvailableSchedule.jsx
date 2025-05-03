@@ -76,7 +76,7 @@ export const usePickAvailableSchedule = () => {
         };
 
         fetchData();
-    }, [user.id, matkulFromStore]); // ← tetap gunakan ini agar fetch ulang saat matkul store update
+    }, [user.id, matkulFromStore]); //
 
 
     const handleEventClick = (info) => {

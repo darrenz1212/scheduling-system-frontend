@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchMatkulByPeriod, AddMatkul } from "../../../api/course/matkulAktif.js";
+import { fetchMatkulByPeriod, AddMatkul, updateMatkul } from "../../../api/course/matkulAktif.js";
 import { fetchAllPeriode } from "../../../api/periodeService";
+import {fetchDosenList} from "../../../api/course/matkulAktif.js";
+import Swal from 'sweetalert2';
 
 export const useActiveCourse = () => {
     const [periodeList, setPeriodeList] = useState([]);
@@ -9,6 +11,10 @@ export const useActiveCourse = () => {
     const [loading, setLoading] = useState(false);
     const [loadingAdd, setLoadingAdd] = useState(false);
     const [errorAdd, setErrorAdd] = useState(null);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [editData, setEditData] = useState(null);
+    const [dosenList, setDosenList] = useState([]);
+
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [formData, setFormData] = useState({
@@ -97,6 +103,51 @@ export const useActiveCourse = () => {
         }
     };
 
+    const openEditModal = async (matkul) => {
+        setEditData(matkul);
+        try {
+            const dosenData = await fetchDosenList();
+            setDosenList(dosenData);
+            setEditModalOpen(true);
+        } catch (err) {
+            console.error("Gagal fetch dosen untuk edit", err);
+        }
+    };
+
+    const updateMatkulDosen = async () => {
+        try {
+            const payload = {
+                id_matkul: editData.id_matkul,
+                sks: editData.sks,
+                praktikum: editData.praktikum,
+                dosen: editData.dosen,
+                kelas: editData.kelas,
+                periode: selectedPeriode
+            };
+
+            console.log("Payload Update:", payload);
+
+            await updateMatkul(editData.id, payload);
+
+            const updated = await fetchMatkulByPeriod(selectedPeriode);
+            setActiveMatkulList(updated);
+            setEditModalOpen(false);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Dosen pengampu berhasil diperbarui.',
+                confirmButtonColor: '#0db0bb'
+            });
+        } catch (err) {
+            console.error("Gagal update dosen", err); // ERROR LOG
+        }
+    };
+
+
+
+
+
     return {
         activeMatkulList,
         periodeList,
@@ -112,5 +163,12 @@ export const useActiveCourse = () => {
         setFormData,
         handleInputChange,
         handleSubmit,
+        editModalOpen,
+        setEditModalOpen,
+        editData,
+        setEditData,
+        openEditModal,
+        updateMatkulDosen,
+        dosenList,
     };
 };

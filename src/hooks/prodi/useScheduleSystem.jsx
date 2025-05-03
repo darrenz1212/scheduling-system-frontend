@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
-import { fetchJadwal, generateSchedule, addJadwal } from "../../api/prodi/scheduleService.js";
-// import {fetchActivePeriod} from"../../api/periodeService.js"
+import {
+    fetchJadwal,
+    generateSchedule,
+    addJadwal,
+    updateJadwal
+} from "../../api/prodi/scheduleService.js";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
@@ -8,66 +12,43 @@ export const useScheduleSystem = (customEventClick = null) => {
     const user = useSelector((state) => state.auth.user);
     const [jadwal, setJadwal] = useState([]);
     const [semesterOptions, setSemesterOptions] = useState([]);
-    const [selectedSemester, setSelectedSemester] = useState("1");
+    const [selectedSemester, setSelectedSemester] = useState("all");
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
     const [isEmpty, setIsEmpty] = useState(false);
+    // Menyimpan edits: { id_jadwal: { hari, jam_mulai, jam_selesai, ruangan_id } }
+    const [editedEvents, setEditedEvents] = useState({});
+    // Modal edit ruangan
+    const [roomModal, setRoomModal] = useState({ open: false, data: null });
+    const openRoomModal = (meta) => setRoomModal({ open: true, data: meta });
+    const closeRoomModal = () => setRoomModal({ open: false, data: null });
 
-    const handleEventClick = (info) => {
-        if (typeof customEventClick === "function") {
-            customEventClick(info);
-            return;
-        }
-
-        const data = info.event.extendedProps.meta;
-        const isPrak = data?.MatkulAktif?.praktikum;
-        const jenis = isPrak ? "Praktikum" : "Teori";
-        const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-
-        Swal.fire({
-            title: `${data?.MatkulAktif?.id_matkul} ${data?.MatkulAktif.MataKuliah.nama_matkul} - ${data?.MatkulAktif?.kelas}`,
-            html: `
-                <b>Dosen:</b> ${data?.MatkulAktif?.User.username}<br/>
-                <b>Jenis:</b> ${jenis}<br/>
-                <b>Hari:</b> ${hari[data?.hari]}<br/>
-                <b>Waktu:</b> ${data?.jam_mulai} - ${data?.jam_selesai}<br/>
-                <b>Ruangan:</b> ${data?.Ruangan.nama_ruangan}
-            `,
-            icon: 'info',
-            confirmButtonColor: '#0db0bb'
-        });
-    };
-
+    // Fetch jadwal
     const fetchData = async () => {
         try {
             setLoading(true);
-            console.log(user.prodi);
-            const res = await fetchJadwal(user.prodi); // ⬅️ user.prodi dikirim benar ke params
-            console.log(res);
-            const data = (res?.data || []).filter(item =>
+            const res = await fetchJadwal(user.prodi);
+            const data = (res.data || []).filter(item =>
                 item?.MatkulAktif?.MataKuliah?.semester
             );
-
             setJadwal(data);
+            setIsEmpty(data.length === 0);
 
-            if (data.length === 0) {
-                setIsEmpty(true);
-            } else {
-                setIsEmpty(false);
-                const semesters = Array.from(
-                    new Set(data.map(d => d.MatkulAktif.MataKuliah.semester))
-                );
+            if (data.length > 0) {
+                const semesters = Array.from(new Set(
+                    data.map(d => d.MatkulAktif.MataKuliah.semester)
+                ));
                 setSemesterOptions(semesters.sort((a, b) => parseInt(a) - parseInt(b)));
+                setSelectedSemester(semesters[0]);
             }
-
-            setLoading(false);
         } catch (error) {
             console.error("Failed to fetch jadwal:", error);
+        } finally {
             setLoading(false);
         }
     };
 
-
+    // Generate & add
     const generateAndAddSchedule = async () => {
         const confirm = await Swal.fire({
             title: "Generate Jadwal Baru?",
@@ -79,48 +60,38 @@ export const useScheduleSystem = (customEventClick = null) => {
             confirmButtonText: "Ya, Generate",
             cancelButtonText: "Batal"
         });
+        if (!confirm.isConfirmed) return;
 
-        if (confirm.isConfirmed) {
-            try {
-                Swal.fire({
-                    title: "Sedang memproses...",
-                    html: "Generate jadwal mungkin memerlukan beberapa detik. Mohon tunggu.",
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
+        try {
+            Swal.fire({
+                title: "Sedang memproses...",
+                html: "Mohon tunggu.",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => Swal.showLoading()
+            });
+            const generated = await generateSchedule(user.prodi);
+            const added = await addJadwal(generated);
+            Swal.close();
+            Swal.fire({
+                title: "Berhasil!",
+                text: "Jadwal berhasil digenerate dan disimpan.",
+                icon: "success",
+                confirmButtonColor: "#0db0bb"
+            });
+            fetchData();
 
-                const generated = await generateSchedule(user.prodi);
-                if (!generated || !generated.data) throw new Error("Gagal generate jadwal");
-                console.log(generated.data)
-                const added = await addJadwal(generated);
-                if (!added) throw new Error("Gagal menambahkan jadwal");
-
-
-                Swal.fire({
-                    title: "Berhasil!",
-                    text: "Jadwal berhasil digenerate dan disimpan.",
-                    icon: "success",
-                    confirmButtonColor: '#0db0bb'
-                });
-
-                fetchData(); // ⬅️ Reload data setelah sukses
-            } catch (error) {
-                console.error("Error saat generate dan tambah jadwal", error);
-                // 🔥 Kalau error
-                Swal.fire({
-                    title: "Gagal!",
-                    text: error.message || "Terjadi kesalahan saat generate jadwal.",
-                    icon: "error",
-                    confirmButtonColor: '#0db0bb'
-                });
-            }
+        } catch (error) {
+            Swal.fire({
+                title: "Gagal!",
+                text: error.message || "Terjadi kesalahan.",
+                icon: "error",
+                confirmButtonColor: "#0db0bb"
+            });
         }
     };
 
-
+    // Setelah fetch atau pilih semester, siapkan events
     useEffect(() => {
         fetchData();
     }, []);
@@ -129,30 +100,89 @@ export const useScheduleSystem = (customEventClick = null) => {
         const filtered = selectedSemester === "all"
             ? jadwal
             : jadwal.filter(j =>
-                j?.MatkulAktif?.MataKuliah?.semester === selectedSemester
+                j.MatkulAktif.MataKuliah.semester === selectedSemester
             );
-
-        const mapped = filtered.map((j) => {
-            const dayNum = j?.hari;
-            const start = j?.jam_mulai;
-            const end = j?.jam_selesai;
-            const isPrak = j?.MatkulAktif?.praktikum;
-            const label = isPrak ? " - Praktikum" : " - Teori";
-
-            const dayMap = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-            const dayName = dayMap[dayNum];
-
+        const dayMap = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+        const mapped = filtered.map(j => {
+            const dayName = dayMap[j.hari];
+            const label = j.MatkulAktif.praktikum ? " - Praktikum" : " - Teori";
             return {
-                id: j?.id_jadwal_kuliah?.toString(),
-                title: `${j?.MatkulAktif?.id_matkul} - ${j?.MatkulAktif?.kelas}${label}`,
-                start: `${dayName}T${start}`,
-                end: `${dayName}T${end}`,
-                meta: j
+                id: j.id_jadwal_kuliah.toString(),
+                title: `${j.MatkulAktif.id_matkul} - ${j.MatkulAktif.kelas}${label}`,
+                start: `${dayName}T${j.jam_mulai}`,
+                end:   `${dayName}T${j.jam_selesai}`,
+                meta:  j
             };
-        }).filter(Boolean);
-
+        });
         setEvents(mapped);
     }, [selectedSemester, jadwal]);
+
+    // Detail click
+    const handleEventClick = info => {
+        if (typeof customEventClick === "function") {
+            customEventClick(info);
+            return;
+        }
+        const data = info.event.extendedProps.meta;
+        const isPrak = data.MatkulAktif.praktikum;
+        const jenis  = isPrak ? "Praktikum" : "Teori";
+        const hariArr= ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+        Swal.fire({
+            title: `${data.MatkulAktif.id_matkul} ${data.MatkulAktif.MataKuliah.nama_matkul} - ${data.MatkulAktif.kelas}`,
+            html: `
+                <b>Dosen:</b> ${data.MatkulAktif.User.username}<br/>
+                <b>Jenis:</b> ${jenis}<br/>
+                <b>Hari:</b> ${hariArr[data.hari]}<br/>
+                <b>Waktu:</b> ${data.jam_mulai} - ${data.jam_selesai}<br/>
+                <b>Ruangan:</b> ${data.Ruangan.nama_ruangan}
+            `,
+            showCancelButton: true,
+            confirmButtonText: "Ubah Ruangan",
+            cancelButtonText: "Tutup",
+            confirmButtonColor: "#0db0bb"
+        }).then(result => {
+            if (result.isConfirmed) openRoomModal(data);
+        });
+    };
+
+    // Drag/drop & resize
+    const handleEventDrop = info => {
+        const meta = info.event.extendedProps.meta;
+        const id = meta.id_jadwal_kuliah;
+        const d = info.event.start;
+        const hari = d.getDay();
+        const jam_mulai = d.toTimeString().slice(0,8);
+        const jam_selesai = info.event.end.toTimeString().slice(0,8);
+        setEditedEvents(prev => ({
+            ...prev,
+            [id]: {
+                hari,
+                jam_mulai,
+                jam_selesai,
+                ruangan_id: meta.ruangan_id
+            }
+        }));
+    };
+
+    // console.log("Edited Event : ",editedEvents)
+    const handleEventResize = handleEventDrop;
+    const hasEdits = Object.keys(editedEvents).length > 0;
+
+    // Save bulk
+    const saveChanges = async () => {
+        if (!hasEdits) return;
+        const updates = Object.entries(editedEvents).map(([id,upd]) => ({
+            id, ...upd
+        }));
+        try {
+            await updateJadwal(updates);
+            Swal.fire({ icon:"success", title:"Perubahan tersimpan", confirmButtonColor:"#0db0bb" });
+            setEditedEvents({});
+            fetchData();
+        } catch (err) {
+            Swal.fire({ icon:"error", title:"Gagal simpan", text: err.message });
+        }
+    };
 
     return {
         events,
@@ -161,7 +191,13 @@ export const useScheduleSystem = (customEventClick = null) => {
         setSelectedSemester,
         loading,
         handleEventClick,
+        handleEventDrop,
+        handleEventResize,
         isEmpty,
-        generateAndAddSchedule
+        generateAndAddSchedule,
+        saveChanges,
+        hasEdits,
+        roomModal,
+        closeRoomModal,
     };
 };

@@ -7,7 +7,7 @@ const routes = [
             { name: "Jadwal", path: "/prodi/schedule" },
             { name: "Ketersediaan Mengajar", path: "/prodi/dosen-schedule" },
             { name: "Mata Kuliah", path: "/prodi/course"},
-            { name: "Periode", path: "/tables"},
+            { name: "Periode", path: "/prodi/period"},
             { name: "Log Out", path: "/"},
         ],
     },

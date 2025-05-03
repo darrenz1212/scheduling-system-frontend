@@ -10,8 +10,6 @@ export const fetchJadwal = async (prodi) => {
 };
 
 
-
-
 export const generateSchedule = async (prodi) => {
     try {
         const result = await api.post('/api/prodi/generate-schedule', { prodi });
@@ -31,3 +29,9 @@ export const addJadwal = async (jadwal) => {
         console.error("Error di addJadwalService: ", e);
     }
 }
+
+export const updateJadwal = async (updateData) => {
+    const response = await api.put(`/api/prodi/jadwal`, { data: updateData });
+    return response.data;
+};
+

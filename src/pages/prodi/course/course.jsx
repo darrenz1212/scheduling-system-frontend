@@ -35,8 +35,8 @@ export default function Course() {
                                 onClick={() => setActiveTab(tab)}
                                 className={`relative px-4 py-2 text-md font-medium capitalize transition-all ${
                                     activeTab === tab
-                                        ? "text-blue-600"
-                                        : "text-gray-600 hover:text-blue-500"
+                                        ? "text-[#0db0bb]"
+                                        : "text-gray-600 hover:text-[#0db0bb]"
                                 }`}
                             >
                                 {tab === "aktif" ? "Mata Kuliah Aktif" : "List Mata Kuliah"}
@@ -46,7 +46,7 @@ export default function Course() {
 
                     {/* Animated Underline */}
                     <span
-                        className="absolute bottom-0 h-[2px] bg-blue-600 transition-all duration-300"
+                        className="absolute bottom-0 h-[2px] bg-[#0db0bb] transition-all duration-300"
                         style={{
                             width: underlineStyle.width,
                             left: underlineStyle.left,

@@ -16,6 +16,7 @@ import LectureAvailabilitySchedule from "./pages/prodi/lectureAvailabilitySchedu
 import Course from "./pages/prodi/course/course.jsx";
 import AdminHome from './pages/admin/home.jsx'
 import SchedulePage from "./pages/prodi/schedule/schedulePage.jsx";
+import PeriodPage from "./pages/prodi/periodPage.jsx";
 
 const router = createBrowserRouter([
     // ============================== Auth ==============================
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
     {
         path : 'prodi/schedule',
         element : <SchedulePage/>
+    },
+    {
+        path : 'prodi/period',
+        element : <PeriodPage/>
     },
     // ============================== Admin ==============================
     {

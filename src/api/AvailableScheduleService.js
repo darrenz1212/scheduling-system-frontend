@@ -12,7 +12,7 @@ export const addAvailableScheduleService = async (scheduleData) => {
 
 export const matkulList = async (id) =>{
     try {
-        const response = await api.get(`/api/dosen/matkul-aktif/dosen/${id}`);
+        const response = await api.get(`/api/dosen/matkul-aktif/${id}`);
         console.log("Respone Console :  ",response)
         return response.data;
     }catch (e){
@@ -23,7 +23,7 @@ export const matkulList = async (id) =>{
 
 export const dosenAvailableSchedule = async (id) =>{
     try {
-        const response = await api.get(`http://localhost:8000/api/dosen/jadwal/${id}`)
+        const response = await api.get(`/api/dosen/jadwal/${id}`)
         return response.data.result
     }catch (e){
         console.error("Error in dosenAvailableSchedule : ", e )

@@ -47,7 +47,7 @@ const convertToFixedTimetable = (events) => {
 
 
 
-const FullCalendarWrapper = ({ events, handleEventClick, eventClassNames  }) => {
+const FullCalendarWrapper = ({ events, handleEventClick,editable = false,eventClassNames  }) => {
     const formattedEvents = convertToFixedTimetable(events);
     const fullCalendarProps = {
         plugins: [timeGridPlugin, interactionPlugin],
@@ -58,7 +58,7 @@ const FullCalendarWrapper = ({ events, handleEventClick, eventClassNames  }) => 
         slotMaxTime: "22:00:00",
         nowIndicator: false,
         selectable: true,
-        editable: false,
+        editable: editable,
         weekends: false,
         events: formattedEvents,
         height: 600,
