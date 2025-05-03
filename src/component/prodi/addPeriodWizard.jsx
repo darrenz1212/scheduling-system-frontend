@@ -1,9 +1,9 @@
 import React from "react";
+import Select from "react-select";
 import { useAddPeriodWizard } from "../../hooks/prodi/course/useAddPeriodWizard.jsx";
 import { useSelector } from "react-redux";
 
 const AddPeriodWizard = ({ setShowAddModal }) => {
-
     const {
         step,
         allCourses,
@@ -19,14 +19,12 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
         submitWizard,
         submitting,
         error,
-        setStep,
-        periodeList,
-        selectedPeriodeId,
-        setSelectedPeriodeId
+        setStep
     } = useAddPeriodWizard();
 
     const dosenList = useSelector((state) => state.dosen.data) || [];
 
+    // const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     if (step === 1) {
         return (
@@ -74,8 +72,6 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
                             >
                                 Batal
                             </button>
-
-
                             <button
                                 onClick={proceedToWizard}
                                 disabled={selectedCourseIds.length === 0}
@@ -90,15 +86,16 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
         );
     }
 
+    const data = wizardData[currentPage];
+    // const kelasSudahTerpakai = data.kelasTerpakai || [];
+
     return (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 overflow-y-auto">
             <div className="min-h-screen flex items-center justify-center p-6">
                 <div className="bg-white rounded-lg p-6 w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
                     <h4 className="text-xl font-bold mb-6 text-center">
                         {
-                            allCourses.find(
-                                (c) => c.id === wizardData[currentPage].id
-                            )?.nama_matkul || wizardData[currentPage].id
+                            allCourses.find((c) => c.id === data.id)?.nama_matkul || data.id
                         }
                     </h4>
 
@@ -107,7 +104,7 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
                             <label className="block text-sm font-medium">SKS Teori</label>
                             <input
                                 type="number"
-                                value={wizardData[currentPage].sks}
+                                value={data.sks}
                                 onChange={(e) =>
                                     updateWizardData(currentPage, "sks", e.target.value)
                                 }
@@ -120,103 +117,95 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
                             <label className="text-sm font-medium">Ada Praktikum?</label>
                             <input
                                 type="checkbox"
-                                checked={wizardData[currentPage].enablePraktikum}
+                                checked={data.enablePraktikum}
                                 onChange={(e) =>
-                                    updateWizardData(
-                                        currentPage,
-                                        "enablePraktikum",
-                                        e.target.checked
-                                    )
+                                    updateWizardData(currentPage, "enablePraktikum", e.target.checked)
                                 }
                             />
                         </div>
 
-                        {wizardData[currentPage].enablePraktikum && (
-                            <div>
-                                <label className="block text-sm font-medium">SKS Praktikum</label>
-                                <input
-                                    type="number"
-                                    value={wizardData[currentPage].sks_praktikum || ""}
-                                    onChange={(e) =>
-                                        updateWizardData(
-                                            currentPage,
-                                            "sks_praktikum",
-                                            e.target.value
-                                        )
-                                    }
-                                    className="w-full border rounded px-3 py-2"
-                                    placeholder="Contoh: 1"
-                                />
-                            </div>
+                        {data.enablePraktikum && (
+                            <>
+                                <div>
+                                    <label className="block text-sm font-medium">SKS Praktikum</label>
+                                    <input
+                                        type="number"
+                                        value={data.sks_praktikum || ""}
+                                        onChange={(e) =>
+                                            updateWizardData(currentPage, "sks_praktikum", e.target.value)
+                                        }
+                                        className="w-full border rounded px-3 py-2"
+                                        placeholder="Contoh: 2"
+                                    />
+                                </div>
+
+                                {data.sks_praktikum === "2" && (
+                                    <div className="mt-2">
+                                        <label className="inline-flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                className="form-checkbox"
+                                                checked={data.pisahPraktikum || false}
+                                                onChange={(e) =>
+                                                    updateWizardData(currentPage, "pisahPraktikum", e.target.checked)
+                                                }
+                                            />
+                                            <span className="ml-2 text-sm text-gray-700">Pisahkan Praktikum (2 sesi, masing-masing 1 SKS)</span>
+                                        </label>
+                                    </div>
+                                )}
+                            </>
                         )}
 
-                        {/*<div>*/}
-                        {/*    <label className="block text-sm font-medium">Dosen</label>*/}
-                        {/*    <select*/}
-                        {/*        value={wizardData[currentPage].dosen}*/}
-                        {/*        onChange={(e) =>*/}
-                        {/*            updateWizardData(currentPage, "dosen", e.target.value)*/}
-                        {/*        }*/}
-                        {/*        className="w-full border rounded px-3 py-2"*/}
-                        {/*    >*/}
-                        {/*        <option value="">Pilih Dosen</option>*/}
-                        {/*        {dosenList.map((dosen) => (*/}
-                        {/*            <option key={dosen.user_id} value={dosen.user_id}>*/}
-                        {/*                {dosen.user_id} - {dosen.username}*/}
-                        {/*            </option>*/}
-                        {/*        ))}*/}
-                        {/*    </select>*/}
-                        {/*</div>*/}
-
                         <div>
-                            <div>
-                                <label className="block text-sm font-medium">Jumlah Kelas</label>
-                                <input
-                                    type="number"
-                                    min="1"
-                                    value={wizardData[currentPage].jumlahKelas || ""}
-                                    onChange={(e) => {
-                                        const jumlah = parseInt(e.target.value) || 0;
-                                        const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                                        const kelasList = Array.from({length: jumlah}).map((_, idx) => ({
-                                            kelas: abjad[idx],
-                                            dosen: "",
-                                        }));
-                                        updateWizardData(currentPage, "jumlahKelas", jumlah);
-                                        updateWizardData(currentPage, "kelasList", kelasList);
-                                    }}
-                                    className="w-full border rounded px-3 py-2"
-                                    placeholder="Contoh: 3"
-                                />
-                            </div>
+                            <label className="block text-sm font-medium">Jumlah Kelas</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={data.jumlahKelas || ""}
+                                onChange={(e) => {
+                                    const jumlah = parseInt(e.target.value) || 0;
+                                    const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-                            {Array.isArray(wizardData[currentPage].kelasList) &&
-                                wizardData[currentPage].kelasList.map((kls, idx) => (
-                                    <div key={idx}>
-                                        <label className="block text-sm font-medium">Dosen untuk
-                                            Kelas {kls.kelas}</label>
-                                        <select
-                                            value={kls.dosen}
-                                            onChange={(e) => {
-                                                const updatedList = [...wizardData[currentPage].kelasList];
-                                                updatedList[idx].dosen = e.target.value;
-                                                updateWizardData(currentPage, "kelasList", updatedList);
-                                            }}
-                                            className="w-full border rounded px-3 py-2"
-                                        >
-                                            <option value="">Pilih Dosen</option>
-                                            {dosenList.map((dosen) => (
-                                                <option key={dosen.user_id} value={dosen.user_id}>
-                                                    {dosen.user_id} - {dosen.username}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                ))}
+                                    const kelasSudahTerpakai = wizardData[currentPage].kelasTerpakai || [];
+
+                                    const abjadAvailable = abjad.split("").filter((huruf) => !kelasSudahTerpakai.includes(huruf));
+
+                                    const kelasBaru = Array.from({length: jumlah}).map((_, idx) => ({
+                                        kelas: abjadAvailable[idx] || abjad[idx], // fallback jika habis
+                                        dosen: ""
+                                    }));
+
+                                    updateWizardData(currentPage, "jumlahKelas", jumlah);
+                                    updateWizardData(currentPage, "kelasList", kelasBaru);
+                                }}
+                                className="w-full border rounded px-3 py-2"
+                                placeholder="Contoh: 3"
+                            />
+
                         </div>
 
+                        {Array.isArray(data.kelasList) && data.kelasList.map((kls, idx) => (
+                            <div key={idx}>
+                                <label className="block text-sm font-medium mb-1">
+                                    Dosen untuk Kelas {kls.kelas}
+                                </label>
+                                <Select
+                                    value={dosenList.find((d) => d.user_id === kls.dosen) || null}
+                                    onChange={(selected) => {
+                                        const updatedList = [...data.kelasList];
+                                        updatedList[idx].dosen = selected?.user_id || "";
+                                        updateWizardData(currentPage, "kelasList", updatedList);
+                                    }}
+                                    options={dosenList}
+                                    getOptionLabel={(d) => `${d.username.trim()} (${d.user_id})`}
+                                    getOptionValue={(d) => d.user_id}
+                                    placeholder="Pilih Dosen"
+                                    classNamePrefix="react-select"
+                                />
+                            </div>
+                        ))}
                     </div>
-
 
                     <div className="flex justify-between items-center mt-6">
                         <button
@@ -236,7 +225,6 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
                                 />
                             ))}
                         </div>
-
                         {currentPage < wizardData.length - 1 ? (
                             <button
                                 onClick={nextPage}

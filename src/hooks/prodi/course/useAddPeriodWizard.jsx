@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { AddMatkul, fetchDosenList } from "../../../api/course/matkulAktif.js";
+import {
+    AddMatkul,
+    fetchDosenList,
+    fetchMatkulByPeriod,
+} from "../../../api/course/matkulAktif.js";
 import { fetchAllMatkul } from "../../../api/course/allCourseService.js";
 import { useDispatch } from "react-redux";
 import { setDosenList, clearDosenList } from "../../../redux/dosenSlice";
@@ -43,8 +47,7 @@ export const useAddPeriodWizard = () => {
                 const response = await fetchAllPeriode();
                 const list = Array.isArray(response) ? response : response.result || [];
                 setPeriodeList(list);
-
-                const aktif = list.find(p => p.active);
+                const aktif = list.find((p) => p.active);
                 if (aktif) setSelectedPeriodeId(aktif.id);
             } catch (err) {
                 console.error("Gagal fetch periode:", err);
@@ -71,6 +74,24 @@ export const useAddPeriodWizard = () => {
         }
     }, [step, dispatch]);
 
+    const getUsedKelasForMatkul = async (matkulId, periodeId) => {
+        try {
+            const all = await fetchMatkulByPeriod(periodeId);
+            return all
+                .filter((m) => m.id_matkul === matkulId)
+                .map((m) => m.kelas?.trim().toUpperCase())
+                .filter(Boolean);
+        } catch (err) {
+            console.error("Gagal cek kelas existing:", err);
+            return [];
+        }
+    };
+
+    const getAvailableKelasAbjad = (used) => {
+        const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        return abjad.filter((a) => !used.includes(a));
+    };
+
     const toggleCourseSelection = (courseId) => {
         setSelectedCourseIds((prev) =>
             prev.includes(courseId)
@@ -79,18 +100,24 @@ export const useAddPeriodWizard = () => {
         );
     };
 
-    const proceedToWizard = () => {
-        const initialData = selectedCourseIds.map((courseId) => {
+    const proceedToWizard = async () => {
+        const initialData = [];
+
+        for (const courseId of selectedCourseIds) {
             const course = allCourses.find((c) => c.id === courseId);
-            return {
+            const existingKelas = await getUsedKelasForMatkul(courseId, selectedPeriodeId);
+
+            initialData.push({
                 id: courseId,
                 sks: course?.sks || "",
                 enablePraktikum: false,
                 sks_praktikum: "",
                 dosen: "",
                 kelas: "",
-            };
-        });
+                kelasTerpakai: existingKelas, // ini akan digunakan untuk menentukan abjad
+            });
+        }
+
         setWizardData(initialData);
         setStep(2);
         setCurrentPage(0);
@@ -120,16 +147,15 @@ export const useAddPeriodWizard = () => {
         setSubmitting(true);
         setError(null);
         try {
-            // 1. Tampilkan dialog pemilihan periode
             const { value: selectedId } = await Swal.fire({
                 title: "Pilih Periode",
                 html: `
-                <select id="periodeSelect" class="swal2-select" style="width: 100%; padding: 8px; border-radius: 5px;">
-                    ${periodeList
-                    .map(p => `<option value="${p.id}">${p.nama} ${p.active ? "(Aktif)" : ""}</option>`)
+          <select id="periodeSelect" class="swal2-select" style="width: 100%; padding: 8px; border-radius: 5px;">
+              ${periodeList
+                    .map((p) => `<option value="${p.id}">${p.nama} ${p.active ? "(Aktif)" : ""}</option>`)
                     .join("")}
-                </select>
-            `,
+          </select>
+        `,
                 confirmButtonText: "Tambahkan",
                 focusConfirm: false,
                 preConfirm: () => {
@@ -146,8 +172,6 @@ export const useAddPeriodWizard = () => {
                 return;
             }
 
-            // 2. Simpan ke database
-            console.log("DATA YANG DIKIRIM KE DATABASE:");
             for (const payload of wizardData) {
                 if (!Array.isArray(payload.kelasList)) continue;
 
@@ -161,21 +185,31 @@ export const useAddPeriodWizard = () => {
                         periode: selectedId,
                     };
 
-                    console.log("Matkul Teori:", mainPayload);
                     await AddMatkul(mainPayload);
 
                     if (payload.enablePraktikum && payload.sks_praktikum) {
-                        const praktikumPayload = {
-                            id_matkul: payload.id,
-                            sks: payload.sks_praktikum,
-                            praktikum: true,
-                            dosen: kelasObj.dosen,
-                            kelas: kelasObj.kelas,
-                            periode: selectedId,
-                        };
-
-                        console.log("Matkul Praktikum:", praktikumPayload);
-                        await AddMatkul(praktikumPayload);
+                        const sksValue = parseInt(payload.sks_praktikum);
+                        if (payload.pisahPraktikum && sksValue === 2) {
+                            for (let i = 0; i < 2; i++) {
+                                await AddMatkul({
+                                    id_matkul: payload.id,
+                                    sks: 1,
+                                    praktikum: true,
+                                    dosen: kelasObj.dosen,
+                                    kelas: kelasObj.kelas,
+                                    periode: selectedId,
+                                });
+                            }
+                        } else {
+                            await AddMatkul({
+                                id_matkul: payload.id,
+                                sks: sksValue,
+                                praktikum: true,
+                                dosen: kelasObj.dosen,
+                                kelas: kelasObj.kelas,
+                                periode: selectedId,
+                            });
+                        }
                     }
                 }
             }
@@ -188,8 +222,6 @@ export const useAddPeriodWizard = () => {
             });
 
             navigate("/prodi/course");
-
-            // Reset wizard
             setStep(1);
             setSelectedCourseIds([]);
             setWizardData([]);
@@ -201,7 +233,6 @@ export const useAddPeriodWizard = () => {
             setSubmitting(false);
         }
     };
-
 
     return {
         step,
@@ -222,5 +253,7 @@ export const useAddPeriodWizard = () => {
         periodeList,
         selectedPeriodeId,
         setSelectedPeriodeId,
+        getAvailableKelasAbjad,
+        getUsedKelasForMatkul,
     };
 };

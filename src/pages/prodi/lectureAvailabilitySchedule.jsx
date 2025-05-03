@@ -2,6 +2,8 @@ import React from "react";
 import ProdiNav from "./prodiNav.jsx";
 import FullCalendarWrapper from "../../widgets/FullCalenderWrapper.jsx";
 import { useLectureAvailabilitySchedule } from "../../hooks/prodi/useLectureAvailabilitySchedule.jsx";
+import Select from "react-select";
+
 
 const LectureAvailabilitySchedule = () => {
     const {
@@ -25,19 +27,35 @@ const LectureAvailabilitySchedule = () => {
                     <label htmlFor="dosenSelect" className="block mb-1 font-medium text-gray-700">
                         Pilih Dosen
                     </label>
-                    <select
-                        id="dosenSelect"
-                        value={selectedDosen}
-                        onChange={(e) => setSelectedDosen(e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                    >
-                        <option value="all">Semua Dosen</option>
-                        {dosenList.map((dosen) => (
-                            <option key={dosen.user_id} value={dosen.user_id}>
-                                {dosen.user_id} - {dosen.username}
-                            </option>
-                        ))}
-                    </select>
+                    <Select
+                        options={[
+                            { value: "all", label: "Semua Dosen" },
+                            ...dosenList.map((d) => ({
+                                value: d.user_id,
+                                label: `${d.user_id} - ${d.username.trim()}`
+                            }))
+                        ]}
+                        value={
+                            selectedDosen === "all"
+                                ? { value: "all", label: "Semua Dosen" }
+                                : dosenList
+                                .map((d) => ({
+                                    value: d.user_id,
+                                    label: `${d.user_id} - ${d.username.trim()}`
+                                }))
+                                .find((option) => option.value === selectedDosen) || null
+                        }
+                        onChange={(selectedOption) => setSelectedDosen(selectedOption.value)}
+                        placeholder="Pilih Dosen"
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        menuPortalTarget={document.body} // <- render di root document
+                        styles={{
+                            menuPortal: (base) => ({ ...base, zIndex: 9999 }) // <- pastikan di atas fullcalendar
+                        }}
+                    />
+
+
                 </div>
 
                 {/* Calendar */}
