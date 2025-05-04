@@ -147,30 +147,30 @@ export const useAddPeriodWizard = () => {
         setSubmitting(true);
         setError(null);
         try {
-            const { value: selectedId } = await Swal.fire({
-                title: "Pilih Periode",
-                html: `
-          <select id="periodeSelect" class="swal2-select" style="width: 100%; padding: 8px; border-radius: 5px;">
-              ${periodeList
-                    .map((p) => `<option value="${p.id}">${p.nama} ${p.active ? "(Aktif)" : ""}</option>`)
-                    .join("")}
-          </select>
-        `,
-                confirmButtonText: "Tambahkan",
-                focusConfirm: false,
-                preConfirm: () => {
-                    const selected = document.getElementById("periodeSelect").value;
-                    if (!selected) {
-                        Swal.showValidationMessage("Silakan pilih periode.");
-                    }
-                    return selected;
-                },
-            });
+            const activePeriode = periodeList.find(p => p.active);
 
-            if (!selectedId) {
+            if (!activePeriode) {
+                Swal.fire("Gagal", "Tidak ditemukan periode yang aktif.", "error");
                 setSubmitting(false);
                 return;
             }
+
+            const result = await Swal.fire({
+                title: "Konfirmasi",
+                html: `Mata kuliah akan ditambahkan ke periode: <strong>${activePeriode.nama}</strong>`,
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Tambahkan",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#3085d6",
+            });
+
+            if (!result.isConfirmed) {
+                setSubmitting(false);
+                return;
+            }
+
+            const selectedId = activePeriode.id;
 
             for (const payload of wizardData) {
                 if (!Array.isArray(payload.kelasList)) continue;
@@ -187,6 +187,7 @@ export const useAddPeriodWizard = () => {
 
                     await AddMatkul(mainPayload);
 
+                    // handle praktikum
                     if (payload.enablePraktikum && payload.sks_praktikum) {
                         const sksValue = parseInt(payload.sks_praktikum);
                         if (payload.pisahPraktikum && sksValue === 2) {
@@ -233,6 +234,7 @@ export const useAddPeriodWizard = () => {
             setSubmitting(false);
         }
     };
+
 
     return {
         step,

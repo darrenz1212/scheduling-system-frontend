@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Select from "react-select";
 import { useAddPeriodWizard } from "../../hooks/prodi/course/useAddPeriodWizard.jsx";
 import { useSelector } from "react-redux";
@@ -22,46 +22,72 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
         setStep
     } = useAddPeriodWizard();
 
+    const [searchTerm, setSearchTerm] = useState(""); // ✅ Pindah ke top-level
     const dosenList = useSelector((state) => state.dosen.data) || [];
 
-    // const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const filteredCourses = allCourses.filter((course) =>
+        course.nama_matkul.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     if (step === 1) {
         return (
-            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 overflow-y-auto">
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-50">
                 <div className="min-h-screen flex items-center justify-center p-6">
-                    <div className="bg-white p-6 rounded-lg w-full max-w-4xl">
-                        <h2 className="text-xl font-semibold mb-4">Pilih Mata Kuliah</h2>
+                    <div className="bg-white p-6 rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-semibold">Pilih Mata Kuliah</h2>
+                            <div className="relative w-64">
+                                <input
+                                    type="text"
+                                    placeholder="Cari mata kuliah..."
+                                    className="border px-3 py-1 pr-8 rounded text-sm w-full"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                                {searchTerm && (
+                                    <button
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+                                        onClick={() => setSearchTerm("")}
+                                    >
+                                        ×
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
                         {loadingCourses ? (
                             <p>Loading...</p>
                         ) : (
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-gray-100 font-semibold">
-                                <tr>
-                                    <th className="p-2 border">ID</th>
-                                    <th className="p-2 border">Nama</th>
-                                    <th className="p-2 border">Semester</th>
-                                    <th className="p-2 border text-right">Pilih</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {allCourses.map((course) => (
-                                    <tr key={course.id} className="border-b">
-                                        <td className="p-2">{course.id}</td>
-                                        <td className="p-2">{course.nama_matkul}</td>
-                                        <td className="p-2">{course.semester}</td>
-                                        <td className="p-2 text-right">
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedCourseIds.includes(course.id)}
-                                                onChange={() => toggleCourseSelection(course.id)}
-                                            />
-                                        </td>
+                            <div className="overflow-y-auto flex-grow">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-gray-100 font-semibold">
+                                    <tr>
+                                        <th className="p-2 border">ID</th>
+                                        <th className="p-2 border">Nama</th>
+                                        <th className="p-2 border">Semester</th>
+                                        <th className="p-2 border text-right">Pilih</th>
                                     </tr>
-                                ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    {filteredCourses.map((course) => (
+                                        <tr key={course.id} className="border-b">
+                                            <td className="p-2">{course.id}</td>
+                                            <td className="p-2">{course.nama_matkul}</td>
+                                            <td className="p-2">{course.semester}</td>
+                                            <td className="p-2 text-right">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedCourseIds.includes(course.id)}
+                                                    onChange={() => toggleCourseSelection(course.id)}
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
+
                         <div className="flex justify-between items-center mt-4">
                             <button
                                 onClick={() => {
