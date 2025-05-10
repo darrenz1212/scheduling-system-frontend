@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchMatkulByPeriod, AddMatkul, updateMatkul } from "../../../api/course/matkulAktif.js";
+import { fetchMatkulByPeriod, AddMatkul, updateMatkul, deleteMatkul} from "../../../api/course/matkulAktif.js";
 import { fetchAllPeriode } from "../../../api/periodeService";
 import {fetchDosenList} from "../../../api/course/matkulAktif.js";
 import Swal from 'sweetalert2';
@@ -125,7 +125,6 @@ export const useActiveCourse = () => {
                 periode: selectedPeriode
             };
 
-            console.log("Payload Update:", payload);
 
             await updateMatkul(editData.id, payload);
 
@@ -143,6 +142,42 @@ export const useActiveCourse = () => {
             console.error("Gagal update dosen", err); // ERROR LOG
         }
     };
+
+    const handleDeleteMatkul = async (id) =>{
+        const confirmation = await Swal.fire({
+            title: "Yakin ingin menghapus?",
+            text: "Data mata kuliah ini akan dihapus secara permanen.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#f23b2e",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Ya, hapus",
+            cancelButtonText: "Batal"
+        })
+        if (confirmation.isConfirmed) {
+            try {
+                await deleteMatkul(id);
+                Swal.fire({
+                    icon: "success",
+                    title: "Terhapus!",
+                    text: "Data mata kuliah berhasil dihapus.",
+                    confirmButtonColor: "#0db0bb"
+                });
+
+                // Refresh data setelah delete
+                setSelectedPeriode((prev) => {
+                    // trigger useEffect agar fetch ulang
+                    return `${prev}`; // force rerender
+                });
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi kesalahan saat menghapus data.",
+                });
+            }
+        }
+    }
 
 
 
@@ -170,5 +205,6 @@ export const useActiveCourse = () => {
         openEditModal,
         updateMatkulDosen,
         dosenList,
+        handleDeleteMatkul
     };
 };

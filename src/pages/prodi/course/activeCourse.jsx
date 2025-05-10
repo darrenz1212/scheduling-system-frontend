@@ -3,6 +3,7 @@ import ProdiNav from "../prodiNav.jsx";
 import { useActiveCourse } from "../../../hooks/prodi/course/useActiveCourse.jsx";
 import AddPeriodWizard from "../../../component/prodi/addPeriodWizard.jsx";
 import Select from "react-select";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 
 
@@ -20,6 +21,7 @@ const ActiveCourse = () => {
         openEditModal,
         updateMatkulDosen,
         dosenList,
+        handleDeleteMatkul
     } = useActiveCourse();
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -111,13 +113,25 @@ const ActiveCourse = () => {
                                         <td className="p-3">{item.User?.username}</td>
                                         <td className="p-3">{item.Periode?.nama}</td>
                                         <td className="p-3">
-                                            <button
-                                                className="bg-[#0db0bb] text-white px-4 py-2 rounded-lg hover:bg-[#0aa2a8] transition text-sm"
-                                                onClick={() => handleEditOpen(item)}
-                                            >
-                                                Edit
-                                            </button>
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={() => handleEditOpen(item)}
+                                                    className="p-2 bg-blue-500 rounded-md hover:bg-blue-600 transition"
+                                                    title="Edit"
+                                                >
+                                                    <PencilSquareIcon className="w-5 h-5 text-white"/>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteMatkul(item.id)}
+                                                    className="p-2 bg-red-500 rounded-md hover:bg-red-600 transition"
+                                                    title="Delete"
+                                                >
+                                                    <TrashIcon className="w-5 h-5 text-white"/>
+                                                </button>
+                                            </div>
                                         </td>
+
+
                                     </tr>
                                 ))
                             ) : (
@@ -133,7 +147,7 @@ const ActiveCourse = () => {
                 )}
             </div>
 
-            {showAddModal && <AddPeriodWizard setShowAddModal={setShowAddModal} />}
+            {showAddModal && <AddPeriodWizard setShowAddModal={setShowAddModal}/>}
 
             {/* Modal Edit */}
             {editModalOpen && editData && (

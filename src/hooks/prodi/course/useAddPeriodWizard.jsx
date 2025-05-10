@@ -114,7 +114,7 @@ export const useAddPeriodWizard = () => {
                 sks_praktikum: "",
                 dosen: "",
                 kelas: "",
-                kelasTerpakai: existingKelas, // ini akan digunakan untuk menentukan abjad
+                kelasTerpakai: existingKelas,
             });
         }
 

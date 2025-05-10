@@ -43,10 +43,20 @@ export const fetchDosenList = async () => {
 
 export const updateMatkul = async (id, updatedData) => {
     try {
-        const response = await api.put(`/api/prodi/matkul-aktif/id  /${id}`, updatedData);
+        const response = await api.put(`/api/prodi/matkul-aktif/id/${id}`, updatedData);
         return response.data;
     } catch (error) {
         console.error("Gagal update matkul aktif:", error);
         throw error;
     }
 };
+
+export const deleteMatkul = async (id)=>{
+    try {
+        const response = await api.delete(`/api/prodi/matkul-aktif/${id}`)
+        return response
+    }catch (error){
+        console.error("Gagal menghapus matkul aktif : ", error)
+        throw error
+    }
+}

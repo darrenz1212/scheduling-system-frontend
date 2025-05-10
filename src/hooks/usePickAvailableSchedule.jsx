@@ -4,10 +4,11 @@ import { initialEvents } from "../pages/dosen/initEvent.jsx";
 import {
     addAvailableScheduleService,
     dosenAvailableSchedule,
-    updateAvailableSchedule
+    updateAvailableSchedule,
 } from "../api/AvailableScheduleService.js";
 import { fetchMatkulList } from "../redux/matkulSlice.jsx";
 import Swal from "sweetalert2";
+import dayjs from "dayjs";
 
 export const usePickAvailableSchedule = () => {
     const [highlightedEvents, setHighlightedEvents] = useState({});
@@ -16,17 +17,16 @@ export const usePickAvailableSchedule = () => {
     const [showModal, setShowModal] = useState(false);
     const [calendarEvents, setCalendarEvents] = useState(initialEvents);
     const [title, setTitle] = useState(" ");
+    const [showMatkulModal, setShowMatkulModal] = useState(false);
 
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const matkulFromStore = useSelector((state) => state.matkul.data);
-
     const prodi = user.prodi;
 
     useEffect(() => {
         const fetchData = async () => {
             if (!user.id) return;
-
             if (matkulFromStore.length === 0) {
                 dispatch(fetchMatkulList(user.id));
                 return;
@@ -46,10 +46,7 @@ export const usePickAvailableSchedule = () => {
                 };
 
                 const mappedEvents = existingSchedules.map((item, index) => {
-                    const foundMatkul = matkulFromStore.find(
-                        (m) => m.id === item.matkul_preferensi
-                    );
-
+                    const foundMatkul = matkulFromStore.find((m) => m.id === item.matkul_preferensi);
                     const namaMatkul = foundMatkul?.MataKuliah?.nama_matkul || " ";
                     const idMatkul = foundMatkul?.id_matkul || " ";
                     const isPraktikum = foundMatkul?.praktikum ? " (praktikum)" : "";
@@ -107,6 +104,10 @@ export const usePickAvailableSchedule = () => {
         setShowModal(false);
     };
 
+    const toggleMatkulModal = () => {
+        setShowMatkulModal((prev) => !prev);
+    };
+
     const getDayNumber = (dayString) => {
         const daysMapping = {
             monday: 1,
@@ -145,23 +146,20 @@ export const usePickAvailableSchedule = () => {
             for (const id of selectedSchedules) {
                 const selectedEvent = calendarEvents.find((event) => event.id === id);
 
-                // jika event sudah ada di database (ada scheduleId), kita update prodi-nya saja
                 if (selectedEvent?.scheduleId) {
                     await updateAvailableSchedule(selectedEvent.scheduleId, {
                         prodi: selectedEvent.prodi === user.prodi ? null : user.prodi,
                     });
                 } else {
                     const dayString = selectedEvent.start.split("T")[0].toLowerCase();
-
                     const formattedData = {
                         dosen: user.id,
                         matkul_preferensi: preferences[id] || null,
                         hari: getDayNumber(dayString),
                         jam_mulai: selectedEvent.start.split("T")[1],
                         jam_akhir: selectedEvent.end ? selectedEvent.end.split("T")[1] : "00:00:00",
-                        prodi: prodi
+                        prodi: prodi,
                     };
-
                     await addAvailableScheduleService(formattedData);
                 }
             }
@@ -185,7 +183,6 @@ export const usePickAvailableSchedule = () => {
                 text: "Gagal memperbarui jadwal. Silakan coba lagi.",
                 confirmButtonColor: "#ef4444",
             });
-
             console.log(error);
         } finally {
             setLoading(false);
@@ -193,6 +190,21 @@ export const usePickAvailableSchedule = () => {
     };
 
     const hasMatkulAssigned = matkulFromStore.length > 0;
+
+    const totalNeededMinutes = matkulFromStore.reduce((acc, item) => {
+        const sksMenit = item.praktikum ? item.sks * 120 : item.sks * 50;
+        return acc + sksMenit;
+    }, 0);
+
+    const totalSelectedMinutes = Object.keys(highlightedEvents).reduce((acc, id) => {
+        const event = calendarEvents.find((e) => e.id === id);
+        if (!event) return acc;
+        const start = dayjs(`2020-01-01T${event.start.split("T")[1]}`);
+        const end = dayjs(`2020-01-01T${event.end.split("T")[1]}`);
+        return acc + end.diff(start, "minute");
+    }, 0);
+
+    const remainingMinutes = Math.max(totalNeededMinutes - totalSelectedMinutes, 0);
 
     return {
         highlightedEvents,
@@ -209,6 +221,11 @@ export const usePickAvailableSchedule = () => {
         formatScheduleLabel,
         matkulOptions: matkulFromStore,
         title,
-        hasMatkulAssigned
+        hasMatkulAssigned,
+        remainingMinutes,
+        showMatkulModal,
+        toggleMatkulModal,
+        matkulAssigned: matkulFromStore,
+        totalSelectedMinutes
     };
 };

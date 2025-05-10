@@ -4,23 +4,24 @@ import FullCalendarWrapper from "../../../widgets/FullCalenderWrapper.jsx";
 import { useScheduleSystem } from "../../../hooks/prodi/useScheduleSystem.jsx";
 import RoomPickerModal from "../../../component/RoomPickerModal.jsx";
 import { exportScheduleToExcel } from "../../../exportToExcel.js";
+import Select from "react-select";
+
 
 const SchedulePage = () => {
     const {
         events,
-        semesterOptions,
-        selectedSemester,
-        setSelectedSemester,
+        filterOptions,
+        handleFilterChange,
         loading,
         handleEventClick,
+        handleEventDrop,
+        handleEventResize,
         isEmpty,
         generateAndAddSchedule,
         saveChanges,
         hasEdits,
-        handleEventDrop,
-        handleEventResize,
         roomModal,
-        closeRoomModal
+        closeRoomModal,
     } = useScheduleSystem();
 
     return (
@@ -38,24 +39,26 @@ const SchedulePage = () => {
                 >
                     Download Excel
                 </button>
-
-                {/* Pilih Semester */}
+                {/*Filter jadwal*/}
                 <div className="mb-4">
-                    <label htmlFor="semesterSelect" className="block mb-1 font-medium text-gray-700">
-                        Pilih Semester
+                    <label className="block mb-1 font-medium text-gray-700">
+                        Filter Jadwal Berdasarkan
                     </label>
-                    <select
-                        id="semesterSelect"
-                        value={selectedSemester}
-                        onChange={(e) => setSelectedSemester(e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg mb-4"
-                    >
-                        <option value="all">Semua Semester</option>
-                        {semesterOptions.map((s) => (
-                            <option key={s} value={s}>Semester {s}</option>
-                        ))}
-                    </select>
+                    <Select
+                        options={filterOptions}
+                        onChange={handleFilterChange}
+                        className="mb-2 z-50"
+                        classNamePrefix="react-select"
+                        isSearchable
+                        placeholder="Pilih Semester/Mata Kuliah/dosen"
+                        menuPortalTarget={document.body}
+                        styles={{
+                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
+                    />
+
                 </div>
+
 
                 {/* Content */}
                 {loading ? (

@@ -22,7 +22,7 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
         setStep
     } = useAddPeriodWizard();
 
-    const [searchTerm, setSearchTerm] = useState(""); // ✅ Pindah ke top-level
+    const [searchTerm, setSearchTerm] = useState("");
     const dosenList = useSelector((state) => state.dosen.data) || [];
 
     const filteredCourses = allCourses.filter((course) =>

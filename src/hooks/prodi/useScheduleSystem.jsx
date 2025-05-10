@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
     fetchJadwal,
     generateSchedule,
@@ -13,17 +13,35 @@ export const useScheduleSystem = (customEventClick = null) => {
     const [jadwal, setJadwal] = useState([]);
     const [semesterOptions, setSemesterOptions] = useState([]);
     const [selectedSemester, setSelectedSemester] = useState("all");
+    const [selectedMatkul, setSelectedMatkul] = useState("all");
+    const [selectedDosen, setSelectedDosen] = useState("all");
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
     const [isEmpty, setIsEmpty] = useState(false);
-    // Menyimpan edits: { id_jadwal: { hari, jam_mulai, jam_selesai, ruangan_id } }
     const [editedEvents, setEditedEvents] = useState({});
-    // Modal edit ruangan
     const [roomModal, setRoomModal] = useState({ open: false, data: null });
+
     const openRoomModal = (meta) => setRoomModal({ open: true, data: meta });
     const closeRoomModal = () => setRoomModal({ open: false, data: null });
 
-    // Fetch jadwal
+    const matkulList = useMemo(() => {
+        const list = jadwal.map(j => ({
+            id: j.MatkulAktif.id_matkul,
+            nama: j.MatkulAktif.MataKuliah.nama_matkul
+        }));
+        const unique = Array.from(new Map(list.map(item => [item.id, item])).values());
+        return unique;
+    }, [jadwal]);
+
+    const dosenList = useMemo(() => {
+        const list = jadwal.map(j => ({
+            id: j.MatkulAktif.dosen,
+            nama: j.MatkulAktif.User.username,
+        }));
+        const unique = Array.from(new Map(list.map(item => [item.id, item])).values());
+        return unique;
+    }, [jadwal]);
+
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -48,7 +66,6 @@ export const useScheduleSystem = (customEventClick = null) => {
         }
     };
 
-    // Generate & add
     const generateAndAddSchedule = async () => {
         const confirm = await Swal.fire({
             title: "Generate Jadwal Baru?",
@@ -80,7 +97,6 @@ export const useScheduleSystem = (customEventClick = null) => {
                 confirmButtonColor: "#0db0bb"
             });
             fetchData();
-
         } catch (error) {
             Swal.fire({
                 title: "Gagal!",
@@ -91,17 +107,18 @@ export const useScheduleSystem = (customEventClick = null) => {
         }
     };
 
-    // Setelah fetch atau pilih semester, siapkan events
     useEffect(() => {
         fetchData();
     }, []);
 
     useEffect(() => {
-        const filtered = selectedSemester === "all"
-            ? jadwal
-            : jadwal.filter(j =>
-                j.MatkulAktif.MataKuliah.semester === selectedSemester
-            );
+        const filtered = jadwal.filter(j => {
+            const semesterMatch = selectedSemester === "all" || j.MatkulAktif.MataKuliah.semester === selectedSemester;
+            const matkulMatch = selectedMatkul === "all" || j.MatkulAktif.id_matkul === selectedMatkul;
+            const dosenMatch = selectedDosen === "all" || j.MatkulAktif.dosen === selectedDosen;
+            return semesterMatch && matkulMatch && dosenMatch;
+        });
+
         const dayMap = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
         const mapped = filtered.map(j => {
             const dayName = dayMap[j.hari];
@@ -115,9 +132,9 @@ export const useScheduleSystem = (customEventClick = null) => {
             };
         });
         setEvents(mapped);
-    }, [selectedSemester, jadwal]);
+    }, [selectedSemester, selectedMatkul, selectedDosen, jadwal]);
 
-    // Detail click
+
     const handleEventClick = info => {
         if (typeof customEventClick === "function") {
             customEventClick(info);
@@ -145,7 +162,6 @@ export const useScheduleSystem = (customEventClick = null) => {
         });
     };
 
-    // Drag/drop & resize
     const handleEventDrop = info => {
         const meta = info.event.extendedProps.meta;
         const id = meta.id_jadwal_kuliah;
@@ -164,11 +180,9 @@ export const useScheduleSystem = (customEventClick = null) => {
         }));
     };
 
-    // console.log("Edited Event : ",editedEvents)
     const handleEventResize = handleEventDrop;
     const hasEdits = Object.keys(editedEvents).length > 0;
 
-    // Save bulk
     const saveChanges = async () => {
         if (!hasEdits) return;
         const updates = Object.entries(editedEvents).map(([id,upd]) => ({
@@ -184,11 +198,40 @@ export const useScheduleSystem = (customEventClick = null) => {
         }
     };
 
+
+    const filterOptions = useMemo(() => [
+        { label: "Semua", value: "all", type: "all" },
+        ...semesterOptions.map((s) => ({ label: `Semester ${s}`, value: s, type: "semester" })),
+        ...matkulList.map((m) => ({ label: `Matkul - ${m.nama}`, value: m.id, type: "matkul" })),
+        ...dosenList.map((d) => ({ label: `Dosen - ${d.nama}`, value: d.id, type: "dosen" })),
+    ], [semesterOptions, matkulList, dosenList]);
+
+
+    const handleFilterChange = (option) => {
+        if (!option) return;
+        setSelectedSemester("all");
+        setSelectedMatkul("all");
+        setSelectedDosen("all");
+
+        if (option.type === "semester") {
+            setSelectedSemester(option.value);
+        } else if (option.type === "matkul") {
+            setSelectedMatkul(option.value);
+        } else if (option.type === "dosen") {
+            setSelectedDosen(option.value);
+        }
+    };
+
+
+
     return {
         events,
         semesterOptions,
         selectedSemester,
         setSelectedSemester,
+        selectedMatkul,
+        setSelectedMatkul,
+        matkulList,
         loading,
         handleEventClick,
         handleEventDrop,
@@ -199,5 +242,8 @@ export const useScheduleSystem = (customEventClick = null) => {
         hasEdits,
         roomModal,
         closeRoomModal,
+        filterOptions,
+        handleFilterChange,
+
     };
 };
