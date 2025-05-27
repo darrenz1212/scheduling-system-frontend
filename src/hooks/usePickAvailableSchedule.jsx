@@ -152,14 +152,17 @@ export const usePickAvailableSchedule = () => {
                     });
                 } else {
                     const dayString = selectedEvent.start.split("T")[0].toLowerCase();
+                    const selectedMatkul = matkulFromStore.find((m) => m.id === preferences[id]);
+                    console.log("Selected Matkul : ",matkulFromStore)
                     const formattedData = {
                         dosen: user.id,
                         matkul_preferensi: preferences[id] || null,
                         hari: getDayNumber(dayString),
                         jam_mulai: selectedEvent.start.split("T")[1],
                         jam_akhir: selectedEvent.end ? selectedEvent.end.split("T")[1] : "00:00:00",
-                        prodi: prodi,
+                        prodi: selectedMatkul?.prodi || prodi,
                     };
+
                     await addAvailableScheduleService(formattedData);
                 }
             }
@@ -205,6 +208,21 @@ export const usePickAvailableSchedule = () => {
     }, 0);
 
     const remainingMinutes = Math.max(totalNeededMinutes - totalSelectedMinutes, 0);
+
+    // ============= edit section =============
+
+    const handleScheduleModalSave = (upd) => {
+        setEditedEvents(prev => ({ ...prev, [upd.id]: upd }));
+        closeScheduleModal();
+    };
+
+    const getBusyEvents = (hari) =>
+        jadwal.filter(j => j.hari === hari);
+
+    const getRuanganList = () => {
+        return Array.from(new Map(jadwal.map(j => [j.ruangan_id, j.Ruangan])).values());
+    };
+
 
     return {
         highlightedEvents,

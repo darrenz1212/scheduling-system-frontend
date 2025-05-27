@@ -35,3 +35,26 @@ export const updateJadwal = async (updateData) => {
     return response.data;
 };
 
+export const fetchJadwalDosen = async (dosenId) => {
+    try {
+        const response = await api.get(`/api/prodi/jadwaldosen/${dosenId}`)
+        // response.data === { result: [...] }
+        return Array.isArray(response.data.result)
+            ? response.data.result
+            : []
+    } catch (e) {
+        console.error("Error di fetchJadwalDosen:", e)
+        return []
+    }
+}
+
+export const fetchRuanganList = async (prodi) => {
+    try {
+        const res = await api.get(`/api/prodi/ruangan/${prodi}`)
+        return res.data.data ?? []
+    } catch (e) {
+        console.error("Error fetch ruangan:", e)
+        return []
+    }
+}
+

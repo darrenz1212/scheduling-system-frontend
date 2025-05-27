@@ -19,8 +19,6 @@ export default function AdminNav() {
             title: "Main Menu",
             pages: [
                 { name: "List User", path: "/admin/home" },
-                { name: "Pick Schedule", path: "/dosen/addschedule" },
-                { name: "ScheduleDosen History", path: "/tables" },
             ],
         },
         {

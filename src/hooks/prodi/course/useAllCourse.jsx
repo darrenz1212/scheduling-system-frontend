@@ -1,6 +1,7 @@
 import { fetchAllMatkul, addMatkul, editMatkul } from "../../../api/course/allCourseService.js";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
 export const useAllCourse = () => {
     const [matkulList, setMatkulList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,10 +13,11 @@ export const useAllCourse = () => {
         nama_matkul: "",
         semester: "",
     });
+    const user = useSelector((state) => state.auth.user);
 
     const getMatkul = async () => {
         try {
-            const result = await fetchAllMatkul();
+            const result = await fetchAllMatkul(user.prodi);
             setMatkulList(result.result || []);
         } catch (err) {
             console.error("Failed to fetch all matkul", err);
@@ -49,7 +51,7 @@ export const useAllCourse = () => {
     const handleSubmitAdd = async (e) => {
         e.preventDefault();
         try {
-            await addMatkul({ ...formData, prodi: 1 });
+            await addMatkul({ ...formData, prodi: user.prodi });
             Swal.fire("Berhasil", "Mata kuliah berhasil ditambahkan", "success");
             setFormData({ id: "", nama_matkul: "", semester: "" });
             setShowAddModal(false);

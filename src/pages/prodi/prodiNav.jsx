@@ -8,9 +8,11 @@ const routes = [
             { name: "Ketersediaan Mengajar", path: "/prodi/dosen-schedule" },
             { name: "Mata Kuliah", path: "/prodi/course"},
             { name: "Periode", path: "/prodi/period"},
+            { name: "Reset Password", path:"#"},
             { name: "Log Out", path: "/"},
         ],
     },
+
 ];
 
 export default function ProdiNav() {

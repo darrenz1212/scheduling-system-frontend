@@ -1,18 +1,18 @@
 import api from "../../axiosConfig.js"
 
-export const fetchAllMatkul = async () =>{
-    try {
-        const response = await api.get('/api/prodi/matkul-aktif')
-        return response.data
-    }catch (error) {
-        console.error(error)
-        throw error
-    }
-}
+// export const fetchAllMatkul = async () =>{
+//     try {
+//         const response = await api.get('/api/prodi/matkul-aktif')
+//         return response.data
+//     }catch (error) {
+//         console.error(error)
+//         throw error
+//     }
+// }
 
-export const fetchMatkulByPeriod = async (periode) => {
+export const fetchMatkulAktif = async (prodi) => {
   try {
-      const response = await api.get(`/api/prodi/matkul-aktif/${periode}`)
+      const response = await api.get(`/api/prodi/matkul-aktif/${prodi}`)
       return response.data
   }catch (error){
       console.error(error)

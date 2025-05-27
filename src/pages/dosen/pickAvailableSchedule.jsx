@@ -160,6 +160,7 @@ const PickAvailableSchedule = () => {
                                     <th className="px-4 py-2 border">Kelas</th>
                                     <th className="px-4 py-2 border">SKS</th>
                                     <th className="px-4 py-2 border">Semester</th>
+                                    <th className="px-4 py-2 border">Prodi</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -172,6 +173,7 @@ const PickAvailableSchedule = () => {
                                         <td className="px-4 py-2 border">{m.kelas}</td>
                                         <td className="px-4 py-2 border">{m.sks}</td>
                                         <td className="px-4 py-2 border">{m.MataKuliah.semester}</td>
+                                        <td className="px-4 py-2 border">Teknik Informatika</td>
                                     </tr>
                                 ))}
                                 </tbody>

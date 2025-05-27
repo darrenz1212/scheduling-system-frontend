@@ -10,13 +10,14 @@ import LandingPage from "./pages/landingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import Home from "./pages/dosen/home.jsx"
 import ProdiHome from "./pages/prodi/home.jsx"
-import ScheduleDosen from "./pages/dosen/scheduleDosen.jsx";
+import JadwalMengajar from "./pages/dosen/jadwalMengajar.jsx";
 import AddSchedule from "./pages/dosen/pickAvailableSchedule.jsx";
 import LectureAvailabilitySchedule from "./pages/prodi/lectureAvailabilitySchedule.jsx";
 import Course from "./pages/prodi/course/course.jsx";
 import AdminHome from './pages/admin/home.jsx'
 import SchedulePage from "./pages/prodi/schedule/schedulePage.jsx";
 import PeriodPage from "./pages/prodi/periodPage.jsx";
+import AccessDenied from "./pages/accesdenied.jsx";
 
 const router = createBrowserRouter([
     // ============================== Auth ==============================
@@ -31,7 +32,7 @@ const router = createBrowserRouter([
     },
     {
         path : "dosen/schedule",
-        element : <ScheduleDosen/>
+        element : <JadwalMengajar/>
     },
     {
         path : "dosen/addschedule",
@@ -62,7 +63,12 @@ const router = createBrowserRouter([
     {
         path : 'admin/home',
         element :<AdminHome/>
-    }
+    },
+
+    {
+        path: "/access-denied",
+        element: <AccessDenied />
+    },
 ]);
 
 createRoot(document.getElementById("root")).render(

@@ -28,7 +28,7 @@ export default function DosenNav() {
             pages: [
                 {
                     name: "Log Out",
-                    path: "#",
+                    path: "/",
                     onClick: handleLogout,
                 },
             ],

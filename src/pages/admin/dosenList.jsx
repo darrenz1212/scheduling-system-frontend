@@ -22,7 +22,7 @@ export default function DosenList({ users }) {
         setForm({
             user_id: user.user_id,
             username: user.username,
-            password: "", // not used
+            password: "",
             status: user.status === "Aktif",
             prodi: user.prodi?.id?.toString() || "",
             role: 3,

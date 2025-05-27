@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
     AddMatkul,
     fetchDosenList,
-    fetchMatkulByPeriod,
+    fetchMatkulAktif,
 } from "../../../api/course/matkulAktif.js";
 import { fetchAllMatkul } from "../../../api/course/allCourseService.js";
 import { useDispatch } from "react-redux";
@@ -10,6 +10,7 @@ import { setDosenList, clearDosenList } from "../../../redux/dosenSlice";
 import { fetchAllPeriode } from "../../../api/periodeService.js";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export const useAddPeriodWizard = () => {
     const [allCourses, setAllCourses] = useState([]);
@@ -22,6 +23,7 @@ export const useAddPeriodWizard = () => {
     const [error, setError] = useState(null);
     const [periodeList, setPeriodeList] = useState([]);
     const [selectedPeriodeId, setSelectedPeriodeId] = useState("");
+    const user = useSelector((state) => state.auth.user);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -30,7 +32,7 @@ export const useAddPeriodWizard = () => {
         const fetchCourses = async () => {
             setLoadingCourses(true);
             try {
-                const data = await fetchAllMatkul();
+                const data = await fetchAllMatkul(user.prodi);
                 setAllCourses(data.result || []);
             } catch (err) {
                 console.log("Error fetching all courses:", err);
@@ -76,7 +78,7 @@ export const useAddPeriodWizard = () => {
 
     const getUsedKelasForMatkul = async (matkulId, periodeId) => {
         try {
-            const all = await fetchMatkulByPeriod(periodeId);
+            const all = await fetchMatkulAktif(periodeId);
             return all
                 .filter((m) => m.id_matkul === matkulId)
                 .map((m) => m.kelas?.trim().toUpperCase())

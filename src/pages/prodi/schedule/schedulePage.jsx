@@ -3,43 +3,49 @@ import ProdiNav from "../prodiNav.jsx";
 import FullCalendarWrapper from "../../../widgets/FullCalenderWrapper.jsx";
 import { useScheduleSystem } from "../../../hooks/prodi/useScheduleSystem.jsx";
 import RoomPickerModal from "../../../component/RoomPickerModal.jsx";
+import EditScheduleModal from "../../../component/EditScheduleModal.jsx";
 import { exportScheduleToExcel } from "../../../exportToExcel.js";
 import Select from "react-select";
-
 
 const SchedulePage = () => {
     const {
         events,
+        availabilityRanges,
         filterOptions,
         handleFilterChange,
         loading,
+        isEmpty,
+        hasEdits,
         handleEventClick,
         handleEventDrop,
         handleEventResize,
-        isEmpty,
         generateAndAddSchedule,
         saveChanges,
-        hasEdits,
         roomModal,
         closeRoomModal,
+        scheduleModal,
+        closeScheduleModal,
+        handleScheduleModalSave,
+        getBusyEvents,
+        getRuanganList
     } = useScheduleSystem();
 
     return (
         <div className="flex flex-col w-full h-screen bg-gray-100 p-6 relative">
             <ProdiNav />
+
             <div className="ml-auto mr-20 w-7/12 max-w-5xl bg-white shadow-lg rounded-lg p-4 relative">
                 <h2 className="text-xl font-semibold text-center mb-4">
                     Jadwal Perkuliahan
                 </h2>
 
-                {/* Download */}
                 <button
                     className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 text-sm rounded-md hover:bg-green-600 transition"
                     onClick={() => exportScheduleToExcel(events)}
                 >
                     Download Excel
                 </button>
-                {/*Filter jadwal*/}
+
                 <div className="mb-4">
                     <label className="block mb-1 font-medium text-gray-700">
                         Filter Jadwal Berdasarkan
@@ -50,17 +56,12 @@ const SchedulePage = () => {
                         className="mb-2 z-50"
                         classNamePrefix="react-select"
                         isSearchable
-                        placeholder="Pilih Semester/Mata Kuliah/dosen"
+                        placeholder="Pilih Semester/Mata Kuliah/Dosen"
                         menuPortalTarget={document.body}
-                        styles={{
-                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                        }}
+                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                     />
-
                 </div>
 
-
-                {/* Content */}
                 {loading ? (
                     <p className="text-center text-gray-500">Loading...</p>
                 ) : isEmpty ? (
@@ -78,6 +79,8 @@ const SchedulePage = () => {
                         <FullCalendarWrapper
                             editable
                             events={events}
+                            businessHours={availabilityRanges}
+                            eventConstraint={{ values: availabilityRanges }}
                             handleEventClick={handleEventClick}
                             eventDrop={handleEventDrop}
                             eventResize={handleEventResize}
@@ -101,10 +104,19 @@ const SchedulePage = () => {
                 <RoomPickerModal
                     jadwal={roomModal.data}
                     onClose={closeRoomModal}
-                    onSave={(newRuanganId) => {
-                        // Simpan edit ruangan di state editedEvents
-                        closeRoomModal();
-                    }}
+                />
+            )}
+
+            {scheduleModal.open && (
+                <EditScheduleModal
+                    open={scheduleModal.open}
+                    data={scheduleModal.data}
+                    availabilityRanges={availabilityRanges}
+                    busyEvents={getBusyEvents(scheduleModal.data?.hari)}
+                    ruanganList={getRuanganList()}
+                    sks={scheduleModal.data?.MatkulAktif?.sks || 2}
+                    onClose={closeScheduleModal}
+                    onSave={handleScheduleModalSave}
                 />
             )}
         </div>

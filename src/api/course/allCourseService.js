@@ -1,8 +1,8 @@
 import api from "../../axiosConfig.js";
 
-export const fetchAllMatkul = async () => {
+export const fetchAllMatkul = async (prodi) => {
     try {
-        const response = await api.get('/api/prodi/matkul');
+        const response = await api.get(`/api/prodi/matkul/${prodi}`);
         return response.data;
     } catch (error) {
         console.error(error);

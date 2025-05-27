@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { fetchMatkulByPeriod, AddMatkul, updateMatkul, deleteMatkul} from "../../../api/course/matkulAktif.js";
+import { fetchMatkulAktif, AddMatkul, updateMatkul, deleteMatkul} from "../../../api/course/matkulAktif.js";
 import { fetchAllPeriode } from "../../../api/periodeService";
 import {fetchDosenList} from "../../../api/course/matkulAktif.js";
 import Swal from 'sweetalert2';
+import { useSelector } from "react-redux";
 
 export const useActiveCourse = () => {
     const [periodeList, setPeriodeList] = useState([]);
@@ -14,6 +15,7 @@ export const useActiveCourse = () => {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [dosenList, setDosenList] = useState([]);
+    const user = useSelector((state) => state.auth.user);
 
 
     const [showAddModal, setShowAddModal] = useState(false);
@@ -46,10 +48,10 @@ export const useActiveCourse = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const data = await fetchMatkulByPeriod(selectedPeriode);
+                const data = await fetchMatkulAktif(user.prodi);
                 setActiveMatkulList(data);
             } catch (err) {
-                console.error("Gagal fetch matkul aktif per periode", err);
+                console.error("Gagal fetch matkul aktif", err);
                 setActiveMatkulList([]);
             } finally {
                 setLoading(false);
@@ -63,7 +65,7 @@ export const useActiveCourse = () => {
         setErrorAdd(null);
         try {
             const response = await AddMatkul(payload);
-            const updated = await fetchMatkulByPeriod(selectedPeriode);
+            const updated = await fetchMatkulAktif(selectedPeriode);
             setActiveMatkulList(updated);
             return response;
         } catch (error) {
@@ -128,7 +130,7 @@ export const useActiveCourse = () => {
 
             await updateMatkul(editData.id, payload);
 
-            const updated = await fetchMatkulByPeriod(selectedPeriode);
+            const updated = await fetchMatkulAktif(selectedPeriode);
             setActiveMatkulList(updated);
             setEditModalOpen(false);
 
