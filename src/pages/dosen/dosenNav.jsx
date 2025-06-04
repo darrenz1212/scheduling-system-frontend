@@ -19,8 +19,8 @@ export default function DosenNav() {
         {
             title: "Main Menu",
             pages: [
-                { name: "My Schedule", path: "/dosen/schedule" },
-                { name: "Pick Schedule", path: "/dosen/addschedule" },
+                { name: "Time Table", path: "/dosen/schedule" },
+                { name: "Jadwal Ketersediaan", path: "/dosen/addschedule" },
             ],
         },
         {

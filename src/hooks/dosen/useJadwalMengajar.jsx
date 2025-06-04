@@ -7,32 +7,23 @@ export const useJadwalMengajar = () => {
     const [loading, setLoading] = useState(true);
     const user = useSelector((state) => state.auth.user);
 
-    const mapHari = (num) => {
-        const hariMap = {
-            1: "monday",
-            2: "tuesday",
-            3: "wednesday",
-            4: "thursday",
-            5: "friday",
-            6: "saturday",
-            7: "sunday"
-        };
-        return hariMap[num] || "monday";
-    };
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await getJadwalDosen(user.id);
                 const jadwal = res?.data || [];
-                console.log("Hook : ", jadwal)
 
-                const mapped = jadwal.map((item) => ({
-                    title: `${item.MatkulAktif?.MataKuliah?.nama_matkul || "Mata Kuliah"}${item.MatkulAktif?.praktikum ? " - Prak" : " - Teori"}`,
-                    start: `${mapHari(item.hari)}T${item.jam_mulai}`,
-                    end: `${mapHari(item.hari)}T${item.jam_selesai}`,
+                const dayMap = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+
+                const mapped = jadwal.map(j => ({
+                    id:    j.id_jadwal_kuliah.toString(),
+                    title: `${j.MatkulAktif?.id_matkul} - ${j.MatkulAktif?.kelas}` +
+                        (j.MatkulAktif?.praktikum ? " - Praktikum" : " - Teori"),
+                    start: `${dayMap[j.hari]}T${j.jam_mulai}`,
+                    end:   `${dayMap[j.hari]}T${j.jam_selesai}`,
+                    meta:  j
                 }));
+
                 setEvents(mapped);
             } catch (err) {
                 console.error("Hook error:", err);
