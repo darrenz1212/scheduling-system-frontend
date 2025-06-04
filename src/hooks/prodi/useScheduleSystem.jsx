@@ -79,6 +79,17 @@ export const useScheduleSystem = (customEventClick = null) => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        if (scheduleModal.open && scheduleModal.data?.MatkulAktif?.dosen) {
+            const dosenId = scheduleModal.data.MatkulAktif.dosen;
+            fetchJadwalDosen(dosenId)
+                .then(setAvailability)
+                .catch(err =>
+                    console.error("Failed to fetch jadwal dosen:", err)
+                );
+        }
+    }, [scheduleModal.open, scheduleModal.data?.MatkulAktif?.dosen]);
+
     const availabilityRanges = useMemo(() => {
         if (!Array.isArray(availability)) return []
         return availability.map(slot => ({
@@ -263,7 +274,32 @@ export const useScheduleSystem = (customEventClick = null) => {
 
     // ============= edit section =============
     const handleScheduleModalSave = (upd) => {
-        setEditedEvents(prev => ({ ...prev, [upd.id]: upd }));
+        const { id_jadwal_kuliah, ...changes } = upd;
+        // track updates to be persisted
+        setEditedEvents(prev => ({ ...prev, [id_jadwal_kuliah]: changes }));
+
+        // immediately reflect the change in the calendar
+        const dayMap = [
+            "sunday",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+        ];
+        setEvents(prev =>
+            prev.map(ev =>
+                ev.id === id_jadwal_kuliah.toString()
+                    ? {
+                        ...ev,
+                        start: `${dayMap[changes.hari]}T${changes.jam_mulai}`,
+                        end: `${dayMap[changes.hari]}T${changes.jam_selesai}`,
+                        meta: { ...ev.meta, ...changes },
+                    }
+                    : ev
+            )
+        );
         closeScheduleModal();
     };
 

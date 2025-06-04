@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 const DAY_NAMES = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
@@ -8,7 +13,7 @@ export default function EditScheduleModal({
                                               data,
                                               availabilityRanges = [],
                                               ruanganList = [],
-                                              busyEvents = [],
+                                              getBusyEvents = () => [],
                                               onClose,
                                               onSave
                                           }) {
@@ -60,6 +65,13 @@ export default function EditScheduleModal({
     const slotsForSelectedDay = safeAvail.filter(
         s => Array.isArray(s.daysOfWeek) && s.daysOfWeek[0] === hari
     );
+
+    const busyEvents =
+        typeof getBusyEvents === "function"
+            ? getBusyEvents(hari)
+            : Array.isArray(getBusyEvents)
+                ? getBusyEvents
+                : [];
 
     const timeOptions = slotsForSelectedDay.reduce((acc, slot) => {
         const durasiMenitTotal = sksMatkul * (isPraktikum ? 120 : 50);

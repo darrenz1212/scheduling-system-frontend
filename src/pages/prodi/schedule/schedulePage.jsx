@@ -112,7 +112,7 @@ const SchedulePage = () => {
                     open={scheduleModal.open}
                     data={scheduleModal.data}
                     availabilityRanges={availabilityRanges}
-                    busyEvents={getBusyEvents(scheduleModal.data?.hari)}
+                    getBusyEvents={getBusyEvents}
                     ruanganList={getRuanganList()}
                     sks={scheduleModal.data?.MatkulAktif?.sks || 2}
                     onClose={closeScheduleModal}
