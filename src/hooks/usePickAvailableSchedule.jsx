@@ -211,17 +211,17 @@ export const usePickAvailableSchedule = () => {
 
     // ============= edit section =============
 
-    const handleScheduleModalSave = (upd) => {
-        setEditedEvents(prev => ({ ...prev, [upd.id]: upd }));
-        closeScheduleModal();
-    };
-
-    const getBusyEvents = (hari) =>
-        jadwal.filter(j => j.hari === hari);
-
-    const getRuanganList = () => {
-        return Array.from(new Map(jadwal.map(j => [j.ruangan_id, j.Ruangan])).values());
-    };
+    // const handleScheduleModalSave = (upd) => {
+    //     setEditedEvents(prev => ({ ...prev, [upd.id]: upd }));
+    //     closeScheduleModal();
+    // };
+    //
+    // const getBusyEvents = (hari) =>
+    //     jadwal.filter(j => j.hari === hari);
+    //
+    // const getRuanganList = () => {
+    //     return Array.from(new Map(jadwal.map(j => [j.ruangan_id, j.Ruangan])).values());
+    // };
 
 
     return {

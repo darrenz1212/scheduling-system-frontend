@@ -10,3 +10,13 @@ export const getJadwalDosen = async (dosenId) => {
         throw error;
     }
 };
+
+export const clearJadwal = async (dosenId) =>{
+    try {
+        const response = await axios.delete(`/api/dosen/jadwal/clear/${dosenId}`)
+        return response.data;
+    }catch (error){
+        console.error("Error clearing jadwal ", error)
+        throw error;
+    }
+}

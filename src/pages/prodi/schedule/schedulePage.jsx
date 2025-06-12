@@ -27,7 +27,8 @@ const SchedulePage = () => {
         closeScheduleModal,
         handleScheduleModalSave,
         getBusyEvents,
-        getRuanganList
+        getRuanganList,
+        clearJadwalAll
     } = useScheduleSystem();
 
     return (
@@ -80,11 +81,17 @@ const SchedulePage = () => {
                             editable
                             events={events}
                             businessHours={availabilityRanges}
-                            eventConstraint={{ values: availabilityRanges }}
+                            eventConstraint={{values: availabilityRanges}}
                             handleEventClick={handleEventClick}
                             eventDrop={handleEventDrop}
                             eventResize={handleEventResize}
                         />
+                        <button
+                            className="mt-4 px-4 py-2 rounded-md text-white bg-red-500 hover:bg-red-600 transition float-left"
+                            onClick={clearJadwalAll}
+                        >
+                            Clear Jadwal
+                        </button>
                         <button
                             className={`mt-4 px-4 py-2 rounded-md text-white float-right transition ${
                                 hasEdits

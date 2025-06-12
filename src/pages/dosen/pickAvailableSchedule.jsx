@@ -30,70 +30,67 @@ const PickAvailableSchedule = () => {
     const matkulOptions = useSelector((state) => state.matkul.data);
 
     return (
-        <div className="flex flex-col w-full h-screen bg-gray-100 p-6 relative">
-            <DosenNav />
-            <div className="ml-auto mr-20 w-7/12 max-w-5xl bg-white shadow-lg rounded-lg p-4">
-                <div className="flex justify-between items-center mb-4">
-                    <button
-                        onClick={toggleMatkulModal}
-                        className="bg-gray-200 text-sm text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
-                    >
-                        Lihat Mata Kuliah Diajarkan
-                    </button>
-                    <div className="text-sm text-gray-600">
+        <div className="flex flex-col w-full h-[120vh] bg-gray-100 p-6 relative">
+            <DosenNav/>
+            <div
+                className="ml-auto mr-0 w-9/12 max-w-7xl bg-white shadow-lg rounded-lg p-6 h-[110vh] flex flex-col justify-between">
+                <div>
+                    <div className="flex justify-between items-center mb-4">
+                        <button
+                            onClick={toggleMatkulModal}
+                            className="bg-gray-200 text-sm text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
+                        >
+                            Lihat Mata Kuliah Diajarkan
+                        </button>
                         <div className="text-sm text-gray-600">
-                            {remainingMinutes === 0
-                                ? (
-                                    <>
-                                        Alokasi waktu yang anda pilih:{" "}
-                                        <span className="font-semibold text-green-600">
-                    {totalSelectedMinutes} menit
-                </span>
-                                    </>
-                                )
-                                : (
-                                    <>
-                                        Sisa waktu perlu dialokasikan:{" "}
-                                        <span className="font-semibold text-red-500">
-                    {remainingMinutes} menit
-                </span>
-                                    </>
-                                )
-                            }
+                            {remainingMinutes === 0 ? (
+                                <>Alokasi waktu: <span
+                                    className="font-semibold text-green-600">{totalSelectedMinutes} menit</span></>
+                            ) : (
+                                <>Sisa waktu perlu dialokasikan: <span
+                                    className="font-semibold text-red-500">{remainingMinutes} menit</span></>
+                            )}
                         </div>
-
                     </div>
-                </div>
 
-                <h2 className="text-xl font-semibold text-center mb-4">
-                    Silahkan pilih jadwal ketersediaan mengajar
-                </h2>
+                    <h2 className="text-xl font-semibold text-center mb-4">
+                        Silahkan pilih jadwal ketersediaan mengajar
+                    </h2>
 
-                {!hasMatkulAssigned ? (
-                    <div className="text-center text-gray-500 py-20">
-                        Anda tidak memiliki jadwal mengajar di periode ini.
-                    </div>
-                ) : (
-                    <>
+                    {!hasMatkulAssigned ? (
+                        <div className="text-center text-gray-500 py-20">
+                            Anda tidak memiliki jadwal mengajar di periode ini.
+                        </div>
+                    ) : (
                         <FullCalendarWrapper
                             events={initialEvents}
                             eventClassNames={eventClassNames}
                             handleEventClick={handleEventClick}
                         />
-                        <div className="flex justify-end mt-4">
-                            <button
-                                className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition ${
-                                    Object.keys(highlightedEvents).length === 0 ? "opacity-50 cursor-not-allowed" : ""
-                                }`}
-                                onClick={handleNextClick}
-                                disabled={Object.keys(highlightedEvents).length === 0}
-                            >
-                                Next
-                            </button>
-                        </div>
-                    </>
+                    )}
+                </div>
+
+                {hasMatkulAssigned && (
+                    <div className="mt-2 mb-4 flex justify-end">
+                        <button
+                            className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition ${
+                                Object.keys(highlightedEvents).length === 0 || remainingMinutes > 0
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                            }`}
+                            onClick={handleNextClick}
+                            disabled={
+                                Object.keys(highlightedEvents).length === 0 ||
+                                remainingMinutes > 0
+                            }
+                        >
+                            Next
+                        </button>
+                    </div>
                 )}
+
             </div>
+
 
             {/* Modal Pilih Matkul */}
             {showModal && (
@@ -113,7 +110,7 @@ const PickAvailableSchedule = () => {
                                             value={preferences[id] || ""}
                                             onChange={(e) => handleInputChange(id, e.target.value)}
                                         >
-                                            <option value="">Pilih Mata Kuliah</option>
+                                            <option value="">Tidak Ada matkul prefrensi</option>
                                             {(matkulOptions || []).map((matkulOption) => (
                                                 <option key={matkulOption.id_matkul} value={matkulOption.id}>
                                                     {`${matkulOption.id_matkul} - ${matkulOption.MataKuliah.nama_matkul}${

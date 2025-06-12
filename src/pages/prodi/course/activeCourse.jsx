@@ -94,7 +94,6 @@ const ActiveCourse = () => {
                                 <th className="p-3 border-b">Kelas</th>
                                 <th className="p-3 border-b">Semester</th>
                                 <th className="p-3 border-b">Dosen</th>
-                                <th className="p-3 border-b">Periode</th>
                                 <th className="p-3 border-b">Aksi</th>
                             </tr>
                             </thead>
@@ -111,7 +110,6 @@ const ActiveCourse = () => {
                                         <td className="p-3">{item.kelas}</td>
                                         <td className="p-3">{item.MataKuliah?.semester}</td>
                                         <td className="p-3">{item.User?.username}</td>
-                                        <td className="p-3">{item.Periode?.nama}</td>
                                         <td className="p-3">
                                             <div className="flex items-center gap-3">
                                                 <button

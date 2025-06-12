@@ -1,89 +1,29 @@
-import React, { useState } from "react";
+import React from "react";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { useUserAdmin } from "../../hooks/admin/useUserAdmin.js";
 
-export default function DosenList({ users }) {
-    const dosenList = users.filter((user) => user.role.name === "Dosen");
-    const { prodiList, handleUpdateUser, handleCreateUser } = useUserAdmin();
+export default function DosenList( ) {
+    const {
+        users: dosenUsers,
+        prodiList,
+        form,
+        showModal,
+        isEditMode,
+        handleChange,
+        openAddModal,
+        openEditModal,
+        closeModal,
+        handleSubmit,
+    } = useUserAdmin();
 
-    const [showModal, setShowModal] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [form, setForm] = useState({
-        user_id: "",
-        username: "",
-        password: "",
-        status: true,
-        prodi: "",
-        role: 3,
-    });
-
-    const handleEditClick = (user) => {
-        setIsEditMode(true);
-        setForm({
-            user_id: user.user_id,
-            username: user.username,
-            password: "",
-            status: user.status === "Aktif",
-            prodi: user.prodi?.id?.toString() || "",
-            role: 3,
-        });
-        setShowModal(true);
-    };
-
-    const handleAddClick = () => {
-        setIsEditMode(false);
-        setForm({
-            user_id: "",
-            username: "",
-            password: "",
-            status: true,
-            prodi: "",
-            role: 3,
-        });
-        setShowModal(true);
-    };
-
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setForm((prev) => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : value,
-        }));
-    };
-
-    const handleSubmit = async () => {
-        try {
-            if (isEditMode) {
-                await handleUpdateUser(form.user_id, {
-                    username: form.username,
-                    status: Boolean(form.status),
-                    prodi: parseInt(form.prodi),
-                    role: parseInt(form.role),
-                });
-            } else {
-                await handleCreateUser({
-                    id: form.user_id,
-                    username: form.username,
-                    password: form.password,
-                    status: Boolean(form.status),
-                    prodi: parseInt(form.prodi),
-                    role: parseInt(form.role),
-                });
-            }
-            alert("User berhasil disimpan");
-            setShowModal(false);
-        } catch (error) {
-            console.error(error);
-            alert("Gagal menyimpan user");
-        }
-    };
+    const dosenList = dosenUsers.filter((user) => user.role.name === "Dosen");
 
     return (
         <div className="mt-6">
             <div className="flex justify-between items-center mb-2">
                 <h3 className="text-xl font-semibold text-gray-800">Dosen</h3>
                 <button
-                    onClick={handleAddClick}
+                    onClick={openAddModal}
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                     + Tambah Dosen
@@ -109,7 +49,7 @@ export default function DosenList({ users }) {
                             <td className="px-4 py-2">{user.prodi.nama_prodi}</td>
                             <td className="px-4 py-2">{user.status}</td>
                             <td className="px-4 py-2">
-                                <button onClick={() => handleEditClick(user)}>
+                                <button onClick={() => openEditModal(user)}>
                                     <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700" />
                                 </button>
                             </td>
@@ -178,7 +118,6 @@ export default function DosenList({ users }) {
                                 </>
                             )}
 
-
                             <div>
                                 <label className="block text-sm font-medium">Prodi</label>
                                 <select
@@ -212,7 +151,7 @@ export default function DosenList({ users }) {
 
                         <div className="flex justify-end mt-6">
                             <button
-                                onClick={() => setShowModal(false)}
+                                onClick={closeModal}
                                 className="px-4 py-2 mr-2 bg-gray-500 text-white rounded hover:bg-gray-600"
                             >
                                 Batal

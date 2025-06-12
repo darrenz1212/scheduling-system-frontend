@@ -62,7 +62,7 @@ const FullCalendarWrapper = ({ events, handleEventClick,editable = false,eventCl
         editable: editable,
         weekends: false,
         events: formattedEvents,
-        height: 600,
+        height: 500,
         validRange: {
             start: "2024-01-01",
             end: "2024-01-06",

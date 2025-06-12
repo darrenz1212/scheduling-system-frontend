@@ -57,4 +57,13 @@ export const fetchRuanganList = async (prodi) => {
         return []
     }
 }
+export const clearJadwal = async (prodi) => {
+    try {
+        const res = await api.delete(`/api/prodi/jadwal/clear/${prodi}`)
+        return res.data
+    } catch (e) {
+        console.error("Error clearing jadwal:", e)
+        throw e
+    }
+}
 

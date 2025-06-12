@@ -4,7 +4,8 @@ import {
     generateSchedule,
     addJadwal,
     updateJadwal,
-    fetchJadwalDosen
+    fetchJadwalDosen,
+    clearJadwal
 } from "../../api/prodi/scheduleService.js";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
@@ -272,6 +273,38 @@ export const useScheduleSystem = (customEventClick = null) => {
         }
     };
 
+    const clearJadwalAll = async () => {
+        const confirm = await Swal.fire({
+            title: "Hapus semua jadwal?",
+            text: "Seluruh jadwal pada periode ini akan dihapus.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#f23b2e",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Ya, hapus",
+            cancelButtonText: "Batal",
+        });
+        if (!confirm.isConfirmed) return;
+
+        try {
+            await clearJadwal(user.prodi);
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil",
+                text: "Semua jadwal telah dihapus.",
+                confirmButtonColor: "#0db0bb",
+            });
+            fetchData();
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                title: "Gagal",
+                text: "Terjadi kesalahan dalah menghapus jadwal",
+            });
+        }
+    };
+
+
     // ============= edit section =============
     const handleScheduleModalSave = (upd) => {
         const { id_jadwal_kuliah, ...changes } = upd;
@@ -339,6 +372,7 @@ export const useScheduleSystem = (customEventClick = null) => {
         generateAndAddSchedule,
         handleScheduleModalSave,
         getBusyEvents,
-        getRuanganList
+        getRuanganList,
+        clearJadwalAll,
     };
 };

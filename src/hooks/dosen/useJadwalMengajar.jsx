@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { getJadwalDosen } from "../../api/dosen/JadwalService.js";
+import { getJadwalDosen, clearJadwal } from "../../api/dosen/JadwalService.js";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+
 
 export const useJadwalMengajar = () => {
     const [events, setEvents] = useState([]);
@@ -36,5 +38,40 @@ export const useJadwalMengajar = () => {
         if (user?.id) fetchData();
     }, [user?.id]);
 
-    return { events, loading };
+    const clearJadwal = async () =>{
+        const confirm = await Swal.fire({
+            title: "Hapus semua jadwal?",
+            text: "Seluruh jadwal pada periode ini akan dihapus.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#f23b2e",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Ya, hapus",
+            cancelButtonText: "Batal",
+        });
+        if (!confirm.isConfirmed) return
+        try {
+            await clearJadwal(user.id);
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil",
+                text: "Semua jadwal telah dihapus.",
+                confirmButtonColor: "#0db0bb",
+            });
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                title: "Gagal",
+                text: "Terjadi kesalahan dalah menghapus jadwal",
+            });
+        }
+    }
+
+    return {
+        events,
+        loading,
+        clearJadwal
+    };
+
+
 };

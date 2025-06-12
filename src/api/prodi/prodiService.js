@@ -8,3 +8,4 @@ export const fetchJadwal = async () =>{
         console.error(e)
     }
 }
+
