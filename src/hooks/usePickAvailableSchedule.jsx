@@ -221,14 +221,14 @@ export const usePickAvailableSchedule = () => {
                 const schedule = await getJadwalDosen(user.id);
                 console.log("Response jadwal dosen:", schedule);
 
-                if (schedule) {
-                    setIsGenerated(true);
-                } else {
+                if (schedule.data.length === 0) {
                     setIsGenerated(false);
+                } else {
+                    setIsGenerated(true);
                 }
             } catch (error) {
                 console.error("Gagal fetch jadwal dosen:", error);
-                setIsGenerated(false); // fallback defensif
+                setIsGenerated(false)
             }
         };
 
