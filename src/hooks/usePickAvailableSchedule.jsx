@@ -9,6 +9,7 @@ import {
 import { fetchMatkulList } from "../redux/matkulSlice.jsx";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
+import {getJadwalDosen} from "../api/dosen/JadwalService.js";
 
 export const usePickAvailableSchedule = () => {
     const [highlightedEvents, setHighlightedEvents] = useState({});
@@ -18,6 +19,7 @@ export const usePickAvailableSchedule = () => {
     const [calendarEvents, setCalendarEvents] = useState(initialEvents);
     const [title, setTitle] = useState(" ");
     const [showMatkulModal, setShowMatkulModal] = useState(false);
+    const [isGenerated, setIsGenerated] = useState(false);
 
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
@@ -209,6 +211,41 @@ export const usePickAvailableSchedule = () => {
 
     const remainingMinutes = Math.max(totalNeededMinutes - totalSelectedMinutes, 0);
 
+
+
+    useEffect(() => {
+        const checkSchedule = async () => {
+            if (!user || !user.id) return;
+
+            try {
+                const schedule = await getJadwalDosen(user.id);
+                console.log("Response jadwal dosen:", schedule);
+
+                if (schedule) {
+                    setIsGenerated(true);
+                } else {
+                    setIsGenerated(false);
+                }
+            } catch (error) {
+                console.error("Gagal fetch jadwal dosen:", error);
+                setIsGenerated(false); // fallback defensif
+            }
+        };
+
+        checkSchedule();
+    }, [user?.id]);
+
+    console.log(isGenerated)
+
+    // setIsGenerated(true);
+    // console.log("isGenerated di-set jadi true");
+    // useEffect(() => {
+    //     console.log("Perubahan isGenerated:", isGenerated);
+    // }, [isGenerated]);
+
+
+
+
     // ============= edit section =============
 
     // const handleScheduleModalSave = (upd) => {
@@ -244,6 +281,7 @@ export const usePickAvailableSchedule = () => {
         showMatkulModal,
         toggleMatkulModal,
         matkulAssigned: matkulFromStore,
-        totalSelectedMinutes
+        totalSelectedMinutes,
+        isGenerated
     };
 };

@@ -24,7 +24,8 @@ const PickAvailableSchedule = () => {
         toggleMatkulModal,
         matkulAssigned,
         hasMatkulAssigned,
-        totalSelectedMinutes
+        totalSelectedMinutes,
+        isGenerated
     } = usePickAvailableSchedule();
 
     const matkulOptions = useSelector((state) => state.matkul.data);
@@ -81,8 +82,10 @@ const PickAvailableSchedule = () => {
                             onClick={handleNextClick}
                             disabled={
                                 Object.keys(highlightedEvents).length === 0 ||
-                                remainingMinutes > 0
+                                remainingMinutes > 0 ||
+                                isGenerated
                             }
+
                         >
                             Next
                         </button>
