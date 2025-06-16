@@ -19,12 +19,17 @@ const EmptySchedule = () => {
 
             {emptySchedule.length > 0 && (
                 <div className="mt-4 px-4 py-3 rounded-lg bg-yellow-100/60 text-left max-w-xl mx-auto">
-                    <p className="text-yellow-800 font-semibold mb-2">dosen yang belum mengisi jadwal:</p>
-                    <ul className="list-disc list-inside text-sm text-yellow-800 space-y-1">
-                        {emptySchedule.map((item, index) => (
-                            <li key={index}>{item}</li>
-                        ))}
-                    </ul>
+                    <p className="text-yellow-800 font-semibold mb-2">
+                        Dosen yang belum mengisi jadwal:
+                    </p>
+
+                    <div className="max-h-40 overflow-y-auto pr-2 ">
+                        <ul className="list-disc list-inside text-sm text-yellow-800 space-y-1">
+                            {emptySchedule.map((item, index) => (
+                                <li key={index}>{item}</li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             )}
         </div>

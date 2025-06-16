@@ -3,9 +3,7 @@ import ProdiNav from "./prodiNav.jsx";
 import FullCalendarWrapper from "../../widgets/FullCalenderWrapper.jsx";
 import Select from "react-select";
 import { useSelector } from "react-redux";
-import {
-    useLectureAvailabilitySchedule
-} from "../../hooks/prodi/useLectureAvailabilitySchedule.jsx";
+import { useLectureAvailabilitySchedule } from "../../hooks/prodi/useLectureAvailabilitySchedule.jsx";
 
 const LectureAvailabilitySchedule = () => {
     const {
@@ -25,62 +23,49 @@ const LectureAvailabilitySchedule = () => {
     const user = useSelector((state) => state.auth.user);
 
     return (
-        <div className="flex flex-col w-full h-screen bg-gray-100 p-6 relative">
+        <div className="flex flex-col w-full h-[100vh] bg-gray-100 p-6 relative">
             <ProdiNav />
-            <div className="ml-auto mr-20 w-7/12 max-w-5xl bg-white shadow-lg rounded-lg p-4">
-                <h2 className="text-xl font-semibold text-center mb-4">
-                    Jadwal Ketersediaan Dosen
-                </h2>
 
-                {/* Select Box Filter */}
-                <div className="mb-4">
-                    <label htmlFor="dosenSelect" className="block mb-1 font-medium text-gray-700">
-                        Pilih Dosen
-                    </label>
-                    <Select
-                        options={[
-                            { value: "all", label: "Semua Dosen" },
-                            ...dosenList.map((d) => ({
-                                value: d.user_id,
-                                label: `${d.user_id} - ${d.username.trim()}`
-                            }))
-                        ]}
-                        value={
-                            selectedDosen === "all"
-                                ? { value: "all", label: "Semua Dosen" }
-                                : dosenList
-                                .map((d) => ({
-                                    value: d.user_id,
-                                    label: `${d.user_id} - ${d.username.trim()}`
-                                }))
-                                .find((option) => option.value === selectedDosen) || null
-                        }
-                        onChange={(selectedOption) => setSelectedDosen(selectedOption.value)}
-                        placeholder="Pilih Dosen"
-                        className="react-select-container"
-                        classNamePrefix="react-select"
-                        menuPortalTarget={document.body}
-                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                    />
-                </div>
-
-                {loading ? (
-                    <p className="text-center text-gray-500">Loading...</p>
-                ) : (
-                    <>
-                        <FullCalendarWrapper events={events} handleEventClick={handleEventClick} />
-
-                        {/* Tombol Next Placeholder */}
-                        <div className="flex justify-end mt-4">
-                            <button
-                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                                onClick={() => alert("Fitur selanjutnya")}
-                            >
-                                Next
-                            </button>
+            <div className="ml-auto mr-0 w-9/12 max-w-7xl bg-white shadow-lg rounded-lg p-6 h-[90vh] flex flex-col justify-between">
+                <div>
+                    {/* Header + Select Dosen */}
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold">Jadwal Ketersediaan Dosen</h2>
+                        <div className="w-1/2">
+                            <Select
+                                options={[
+                                    { value: "all", label: "Semua Dosen" },
+                                    ...dosenList.map((d) => ({
+                                        value: d.user_id,
+                                        label: `${d.user_id} - ${d.username.trim()}`
+                                    }))
+                                ]}
+                                value={
+                                    selectedDosen === "all"
+                                        ? { value: "all", label: "Semua Dosen" }
+                                        : dosenList
+                                        .map((d) => ({
+                                            value: d.user_id,
+                                            label: `${d.user_id} - ${d.username.trim()}`
+                                        }))
+                                        .find((option) => option.value === selectedDosen) || null
+                                }
+                                onChange={(option) => setSelectedDosen(option.value)}
+                                placeholder="Pilih Dosen"
+                                className="z-50"
+                                classNamePrefix="react-select"
+                                menuPortalTarget={document.body}
+                                styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                            />
                         </div>
-                    </>
-                )}
+                    </div>
+
+                    {loading ? (
+                        <p className="text-center text-gray-500 py-20">Loading...</p>
+                    ) : (
+                        <FullCalendarWrapper events={events} handleEventClick={handleEventClick} />
+                    )}
+                </div>
             </div>
 
             {/* Modal Edit */}
