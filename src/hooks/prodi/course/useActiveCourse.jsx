@@ -177,6 +177,7 @@ export const useActiveCourse = () => {
                     title: "Gagal!",
                     text: "Terjadi kesalahan saat menghapus data.",
                 });
+                console.error(error)
             }
         }
     }

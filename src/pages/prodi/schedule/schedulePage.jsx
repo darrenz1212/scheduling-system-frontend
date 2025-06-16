@@ -1,11 +1,13 @@
 import React from "react";
 import ProdiNav from "../prodiNav.jsx";
+import emptySchedule from "./emptySchedule.jsx";
 import FullCalendarWrapper from "../../../widgets/FullCalenderWrapper.jsx";
 import { useScheduleSystem } from "../../../hooks/prodi/useScheduleSystem.jsx";
 import RoomPickerModal from "../../../component/RoomPickerModal.jsx";
 import EditScheduleModal from "../../../component/EditScheduleModal.jsx";
 import { exportScheduleToExcel } from "../../../exportToExcel.js";
 import Select from "react-select";
+import EmptySchedule from "./emptySchedule.jsx";
 
 const SchedulePage = () => {
     const {
@@ -19,7 +21,6 @@ const SchedulePage = () => {
         handleEventClick,
         handleEventDrop,
         handleEventResize,
-        generateAndAddSchedule,
         saveChanges,
         roomModal,
         closeRoomModal,
@@ -66,15 +67,8 @@ const SchedulePage = () => {
                 {loading ? (
                     <p className="text-center text-gray-500">Loading...</p>
                 ) : isEmpty ? (
-                    <div className="text-center space-y-4">
-                        <p className="text-gray-700">Belum ada jadwal pada periode ini.</p>
-                        <button
-                            onClick={generateAndAddSchedule}
-                            className="bg-[#0db0bb] text-white px-6 py-2 rounded-lg hover:bg-[#0aa2a8] transition"
-                        >
-                            Generate Jadwal Sekarang
-                        </button>
-                    </div>
+
+                    <EmptySchedule/>
                 ) : (
                     <>
                         <FullCalendarWrapper

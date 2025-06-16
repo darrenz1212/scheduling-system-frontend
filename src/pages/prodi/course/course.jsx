@@ -24,7 +24,7 @@ export default function Course() {
     return (
         <div className="flex min-h-screen bg-gray-100">
             <ProdiNav />
-            <div className="ml-auto mr-20 w-7/12 max-w-5xl bg-white shadow-lg rounded-lg p-6 mt-5">
+            <div className="ml-auto mr-20 w-7/12 max-w-5xl bg-white h-full shadow-lg rounded-lg p-6 mt-5">
                 {/* Tabs */}
                 <div className="relative border-b border-gray-300 mb-6">
                     <div className="flex">

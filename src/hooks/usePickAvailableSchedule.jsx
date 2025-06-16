@@ -188,7 +188,7 @@ export const usePickAvailableSchedule = () => {
                 text: "Gagal memperbarui jadwal. Silakan coba lagi.",
                 confirmButtonColor: "#ef4444",
             });
-            console.log(error);
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -219,7 +219,6 @@ export const usePickAvailableSchedule = () => {
 
             try {
                 const schedule = await getJadwalDosen(user.id);
-                console.log("Response jadwal dosen:", schedule);
 
                 if (schedule.data.length === 0) {
                     setIsGenerated(false);

@@ -26,9 +26,6 @@ const AllCourse = () => {
     );
 
     return (
-        <div className="flex bg-gray-100 min-h-screen w-full">
-            <ProdiNav />
-
             <div className="flex flex-col w-full bg-white shadow-lg rounded-none p-6">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
@@ -55,8 +52,8 @@ const AllCourse = () => {
                 {loading ? (
                     <p className="text-gray-500 text-center">Loading...</p>
                 ) : (
-                    <div className="overflow-x-auto rounded-lg border border-gray-200">
-                        <table className="w-full text-sm text-left">
+                    <div className="rounded-lg border border-gray-200 max-h-[65vh] overflow-y-auto overflow-x-auto">
+                        <table className="min-w-full text-sm text-left">
                             <thead className="bg-[#ecfafa] text-[#0db0bb] font-semibold">
                             <tr>
                                 <th className="p-3 border-b">ID</th>
@@ -93,7 +90,6 @@ const AllCourse = () => {
                         </table>
                     </div>
                 )}
-            </div>
 
             {/* Modal Tambah */}
             {showAddModal && (
