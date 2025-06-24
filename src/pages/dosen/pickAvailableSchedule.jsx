@@ -25,7 +25,8 @@ const PickAvailableSchedule = () => {
         matkulAssigned,
         hasMatkulAssigned,
         totalSelectedMinutes,
-        isGenerated
+        isGenerated,
+        clearSchedule
     } = usePickAvailableSchedule();
 
     const matkulOptions = useSelector((state) => state.matkul.data);
@@ -72,7 +73,14 @@ const PickAvailableSchedule = () => {
                 </div>
 
                 {hasMatkulAssigned && (
-                    <div className="mt-2 mb-4 flex justify-end">
+                    <div className="mt-2 mb-4 flex justify-between items-center">
+                        <button
+                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                            onClick={clearSchedule}
+                        >
+                            Clear Jadwal
+                        </button>
+
                         <button
                             className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition ${
                                 Object.keys(highlightedEvents).length === 0 || remainingMinutes > 0
@@ -85,12 +93,12 @@ const PickAvailableSchedule = () => {
                                 remainingMinutes > 0 ||
                                 isGenerated
                             }
-
                         >
                             Next
                         </button>
                     </div>
                 )}
+
 
             </div>
 

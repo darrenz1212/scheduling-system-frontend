@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initialEvents } from "../pages/dosen/initEvent.jsx";
 import {
-    addAvailableScheduleService,
+    addAvailableScheduleService, deleteAvailableJadwal,
     dosenAvailableSchedule,
     updateAvailableSchedule,
+
 } from "../api/AvailableScheduleService.js";
 import { fetchMatkulList } from "../redux/matkulSlice.jsx";
 import Swal from "sweetalert2";
@@ -197,7 +198,7 @@ export const usePickAvailableSchedule = () => {
     const hasMatkulAssigned = matkulFromStore.length > 0;
 
     const totalNeededMinutes = matkulFromStore.reduce((acc, item) => {
-        const sksMenit = item.praktikum ? item.sks * 120 : item.sks * 50;
+        const sksMenit = item.praktikum ? item.sks * 125 : item.sks * 55;
         return acc + sksMenit;
     }, 0);
 
@@ -259,6 +260,31 @@ export const usePickAvailableSchedule = () => {
     //     return Array.from(new Map(jadwal.map(j => [j.ruangan_id, j.Ruangan])).values());
     // };
 
+    // clear
+    const clearSchedule = async () => {
+        const confirm = await Swal.fire({
+            title: "Apakah kamu yakin?",
+            text: "Semua jadwal ketersediaan Anda akan dihapus.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Ya, hapus!",
+            cancelButtonText: "Batal"
+        });
+
+        if (confirm.isConfirmed) {
+            try {
+                await deleteAvailableJadwal(user.id);
+                await Swal.fire("Berhasil", "Semua jadwal berhasil dihapus.", "success");
+                window.location.reload();
+            } catch (error) {
+                console.error("Error saat delete jadwal", error);
+                Swal.fire("Gagal", "Terjadi kesalahan saat menghapus jadwal.", "error");
+            }
+        }
+    };
+
 
     return {
         highlightedEvents,
@@ -281,6 +307,7 @@ export const usePickAvailableSchedule = () => {
         toggleMatkulModal,
         matkulAssigned: matkulFromStore,
         totalSelectedMinutes,
-        isGenerated
+        isGenerated,
+        clearSchedule
     };
 };

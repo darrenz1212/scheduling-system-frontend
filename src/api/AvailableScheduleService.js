@@ -70,3 +70,13 @@ export const fetchDosenList = async () => {
     }
 };
 
+export const deleteAvailableJadwal = async (id)=>{
+    try {
+        const response = await api.delete(`/api/dosen/jadwal/clear/${id}`);
+        return response
+    }catch (error){
+        console.error("Error saat delete jadwal")
+        throw error
+    }
+}
+

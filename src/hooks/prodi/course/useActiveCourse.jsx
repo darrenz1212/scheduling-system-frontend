@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
-import { fetchMatkulAktif, AddMatkul, updateMatkul, deleteMatkul} from "../../../api/course/matkulAktif.js";
+import {
+    fetchMatkulAktif,
+    AddMatkul,
+    updateMatkul,
+    deleteMatkul,
+    fetchDosenList
+} from "../../../api/course/matkulAktif.js";
 import { fetchAllPeriode } from "../../../api/periodeService";
-import {fetchDosenList} from "../../../api/course/matkulAktif.js";
 import Swal from 'sweetalert2';
 import { useSelector } from "react-redux";
 
@@ -16,9 +21,8 @@ export const useActiveCourse = () => {
     const [editData, setEditData] = useState(null);
     const [dosenList, setDosenList] = useState([]);
     const user = useSelector((state) => state.auth.user);
-
-
     const [showAddModal, setShowAddModal] = useState(false);
+
     const [formData, setFormData] = useState({
         id_matkul: "",
         sks: "",
@@ -48,8 +52,11 @@ export const useActiveCourse = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const data = await fetchMatkulAktif(user.prodi);
-                setActiveMatkulList(data);
+                const all = await fetchMatkulAktif(user.prodi);
+                const filtered = (all || []).filter(
+                    (m) => m.periode === selectedPeriode
+                );
+                setActiveMatkulList(filtered);
             } catch (err) {
                 console.error("Gagal fetch matkul aktif", err);
                 setActiveMatkulList([]);
@@ -58,15 +65,16 @@ export const useActiveCourse = () => {
             }
         };
         fetchData();
-    }, [selectedPeriode]);
+    }, [selectedPeriode, user.prodi]);
 
     const addActiveCourse = async (payload) => {
         setLoadingAdd(true);
         setErrorAdd(null);
         try {
             const response = await AddMatkul(payload);
-            const updated = await fetchMatkulAktif(selectedPeriode);
-            setActiveMatkulList(updated);
+            const all = await fetchMatkulAktif(user.prodi);
+            const filtered = (all || []).filter((m) => m.periode === selectedPeriode);
+            setActiveMatkulList(filtered);
             return response;
         } catch (error) {
             setErrorAdd(error);
@@ -127,11 +135,11 @@ export const useActiveCourse = () => {
                 periode: selectedPeriode
             };
 
-
             await updateMatkul(editData.id, payload);
 
-            const updated = await fetchMatkulAktif(selectedPeriode);
-            setActiveMatkulList(updated);
+            const all = await fetchMatkulAktif(user.prodi);
+            const filtered = (all || []).filter((m) => m.periode === selectedPeriode);
+            setActiveMatkulList(filtered);
             setEditModalOpen(false);
 
             Swal.fire({
@@ -141,11 +149,11 @@ export const useActiveCourse = () => {
                 confirmButtonColor: '#0db0bb'
             });
         } catch (err) {
-            console.error("Gagal update dosen", err); // ERROR LOG
+            console.error("Gagal update dosen", err);
         }
     };
 
-    const handleDeleteMatkul = async (id) =>{
+    const handleDeleteMatkul = async (id) => {
         const confirmation = await Swal.fire({
             title: "Yakin ingin menghapus?",
             text: "Data mata kuliah ini akan dihapus secara permanen.",
@@ -155,7 +163,8 @@ export const useActiveCourse = () => {
             cancelButtonColor: "#6b7280",
             confirmButtonText: "Ya, hapus",
             cancelButtonText: "Batal"
-        })
+        });
+
         if (confirmation.isConfirmed) {
             try {
                 await deleteMatkul(id);
@@ -165,27 +174,18 @@ export const useActiveCourse = () => {
                     text: "Data mata kuliah berhasil dihapus.",
                     confirmButtonColor: "#0db0bb"
                 });
-
-                // Refresh data setelah delete
-                setSelectedPeriode((prev) => {
-                    // trigger useEffect agar fetch ulang
-                    return `${prev}`; // force rerender
-                });
+                setSelectedPeriode((prev) => `${prev}`);
             } catch (error) {
                 Swal.fire({
                     icon: "error",
                     title: "Gagal!",
                     text: "Terjadi kesalahan saat menghapus data.",
                 });
-                console.error(error)
+                console.error(error);
             }
         }
-    }
-
-
-
-
-
+    };
+    
     return {
         activeMatkulList,
         periodeList,
@@ -208,6 +208,6 @@ export const useActiveCourse = () => {
         openEditModal,
         updateMatkulDosen,
         dosenList,
-        handleDeleteMatkul
+        handleDeleteMatkul,
     };
 };

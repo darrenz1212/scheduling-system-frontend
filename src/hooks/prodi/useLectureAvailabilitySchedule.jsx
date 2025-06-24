@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
     fetchAllAvailableSchedule,
     fetchDosenList,
-    editAlokasiProdi
+    editAlokasiProdi,
 } from "../../api/AvailableScheduleService";
 import Swal from "sweetalert2";
 import {useSelector} from "react-redux";
@@ -46,10 +46,14 @@ export const useLectureAvailabilitySchedule = () => {
 
                 setDosenList(dosenData);
 
+
                 const mapped = scheduleData.result.map((item) => {
                     const { id_matkul, kelas, praktikum } = item.MatkulAktif || {};
                     const praktikumSuffix = praktikum ? "(P)" : "";
                     const title = `${item.dosen} - ${id_matkul || ""} - ${kelas || ""} ${praktikumSuffix}`.trim();
+                    const color = item.added_to_jadwal
+                        ? "#d9d9d9"
+                        : item.Prodi?.warna || "#3b82f6";
 
                     return {
                         id: item.id.toString(),
@@ -57,10 +61,11 @@ export const useLectureAvailabilitySchedule = () => {
                         dosenId: item.dosen,
                         start: `${dayMap[item.hari]}T${item.jam_mulai}`,
                         end: `${dayMap[item.hari]}T${item.jam_akhir}`,
-                        color: item.Prodi?.warna || "#3b82f6",
+                        color,
                         matkul_preferensi: item.matkul_preferensi,
                         prodi: item.prodi,
-                        hari: item.hari
+                        hari: item.hari,
+                        added_to_jadwal : item.added_to_jadwal
                     };
                 });
 
@@ -78,7 +83,7 @@ export const useLectureAvailabilitySchedule = () => {
     const handleEventClick = (clickInfo) => {
         const event = events.find((e) => e.id === clickInfo.event.id);
 
-        if (event?.matkul_preferensi !== null) {
+        if (event?.matkul_preferensi !== null || event?.added_to_jadwal === true) {
             Swal.fire({
                 icon: "warning",
                 title: "Tidak dapat dialokasikan",
