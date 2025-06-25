@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ProdiNav from "../prodiNav.jsx";
 import { useActiveCourse } from "../../../hooks/prodi/course/useActiveCourse.jsx";
-import AddPeriodWizard from "../../../component/prodi/addPeriodWizard.jsx";
+import AddMatkulAktifWizard from "../../../component/prodi/addMatkulAktifWizard.jsx";
 import Select from "react-select";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
@@ -146,7 +146,7 @@ const ActiveCourse = () => {
                 </div>
             )}
 
-            {showAddModal && <AddPeriodWizard setShowAddModal={setShowAddModal} />}
+            {showAddModal && <AddMatkulAktifWizard setShowAddModal={setShowAddModal} />}
 
             {editModalOpen && editData && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">

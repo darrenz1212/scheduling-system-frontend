@@ -3,7 +3,7 @@ import Select from "react-select";
 import { useAddPeriodWizard } from "../../hooks/prodi/course/useAddPeriodWizard.jsx";
 import { useSelector } from "react-redux";
 
-const AddPeriodWizard = ({ setShowAddModal }) => {
+const AddMatkulAktifWizard = ({ setShowAddModal }) => {
     const {
         step,
         allCourses,
@@ -287,4 +287,4 @@ const AddPeriodWizard = ({ setShowAddModal }) => {
     );
 };
 
-export default AddPeriodWizard;
+export default AddMatkulAktifWizard;
