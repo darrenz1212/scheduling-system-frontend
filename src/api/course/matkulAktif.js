@@ -22,6 +22,7 @@ export const fetchMatkulAktif = async (prodi) => {
 
 export const AddMatkul = async (matkulData) => {
     try {
+        console.log("KIRIM:", matkulData);
         const response = await api.post("/api/prodi/matkul-aktif", matkulData);
         return response.data;
     } catch (error) {

@@ -108,15 +108,15 @@ export const useAddPeriodWizard = () => {
         for (const courseId of selectedCourseIds) {
             const course = allCourses.find((c) => c.id === courseId);
             const existingKelas = await getUsedKelasForMatkul(courseId, selectedPeriodeId);
+            const availableKelas = getAvailableKelasAbjad(existingKelas);
 
             initialData.push({
                 id: courseId,
-                sks: course?.sks || "",
-                enablePraktikum: false,
-                sks_praktikum: "",
+                kelas: availableKelas[0] || "",
                 dosen: "",
-                kelas: "",
-                kelasTerpakai: existingKelas,
+                dosenPraktikum: "",
+                pisahDosen: false,
+                hasPraktikum: course?.sks_praktikum > 0,
             });
         }
 
@@ -125,6 +125,7 @@ export const useAddPeriodWizard = () => {
         setCurrentPage(0);
     };
 
+
     const updateWizardData = (index, field, value) => {
         setWizardData((prev) => {
             const updated = [...prev];
@@ -132,6 +133,7 @@ export const useAddPeriodWizard = () => {
             return updated;
         });
     };
+
 
     const nextPage = () => {
         if (currentPage < wizardData.length - 1) {
@@ -148,9 +150,9 @@ export const useAddPeriodWizard = () => {
     const submitWizard = async () => {
         setSubmitting(true);
         setError(null);
-        try {
-            const activePeriode = periodeList.find(p => p.active);
 
+        try {
+            const activePeriode = periodeList.find((p) => p.active);
             if (!activePeriode) {
                 Swal.fire("Gagal", "Tidak ditemukan periode yang aktif.", "error");
                 setSubmitting(false);
@@ -174,42 +176,46 @@ export const useAddPeriodWizard = () => {
 
             const selectedId = activePeriode.id;
 
-            for (const payload of wizardData) {
-                if (!Array.isArray(payload.kelasList)) continue;
+            for (const data of wizardData) {
+                const selectedMatkul = allCourses.find((c) => c.id === data.id);
+                const sksTeori = selectedMatkul?.sks_teori || 0;
+                const sksPraktikum = selectedMatkul?.sks_praktikum || 0;
 
-                for (const kelasObj of payload.kelasList) {
-                    const mainPayload = {
-                        id_matkul: payload.id,
-                        sks: payload.sks,
+                for (const kelasObj of data.kelasList || []) {
+                    const kelas = kelasObj.kelas;
+                    const dosenTeori = kelasObj.dosenTeori;
+                    const dosenPraktikum = kelasObj.pisahDosen ? kelasObj.dosenPraktikum : dosenTeori;
+
+                    // TEORI – hanya sekali
+                    await AddMatkul({
+                        id_matkul: data.id,
+                        sks: sksTeori,
                         praktikum: false,
-                        dosen: kelasObj.dosen,
-                        kelas: kelasObj.kelas,
+                        dosen: dosenTeori,
+                        kelas,
                         periode: selectedId,
-                    };
+                    });
 
-                    await AddMatkul(mainPayload);
-
-                    // handle praktikum
-                    if (payload.enablePraktikum && payload.sks_praktikum) {
-                        const sksValue = parseInt(payload.sks_praktikum);
-                        if (payload.pisahPraktikum && sksValue === 2) {
+                    // PRAKTIKUM – jika ada
+                    if (data.hasPraktikum && sksPraktikum > 0) {
+                        if (kelasObj.pisahPraktikum && sksPraktikum === 2) {
                             for (let i = 0; i < 2; i++) {
                                 await AddMatkul({
-                                    id_matkul: payload.id,
+                                    id_matkul: data.id,
                                     sks: 1,
                                     praktikum: true,
-                                    dosen: kelasObj.dosen,
-                                    kelas: kelasObj.kelas,
+                                    dosen: dosenPraktikum,
+                                    kelas,
                                     periode: selectedId,
                                 });
                             }
                         } else {
                             await AddMatkul({
-                                id_matkul: payload.id,
-                                sks: sksValue,
+                                id_matkul: data.id,
+                                sks: sksPraktikum,
                                 praktikum: true,
-                                dosen: kelasObj.dosen,
-                                kelas: kelasObj.kelas,
+                                dosen: dosenPraktikum,
+                                kelas,
                                 periode: selectedId,
                             });
                         }
@@ -229,6 +235,7 @@ export const useAddPeriodWizard = () => {
             setSelectedCourseIds([]);
             setWizardData([]);
             setCurrentPage(0);
+
         } catch (err) {
             console.error("Error submitting wizard:", err);
             setError(err);
@@ -236,6 +243,8 @@ export const useAddPeriodWizard = () => {
             setSubmitting(false);
         }
     };
+
+
 
 
     return {

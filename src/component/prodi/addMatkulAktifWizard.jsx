@@ -126,64 +126,9 @@ const AddMatkulAktifWizard = ({ setShowAddModal }) => {
                     </h4>
 
                     <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium">SKS Teori</label>
-                            <input
-                                type="number"
-                                value={data.sks}
-                                onChange={(e) =>
-                                    updateWizardData(currentPage, "sks", e.target.value)
-                                }
-                                className="w-full border rounded px-3 py-2"
-                                placeholder="Contoh: 3"
-                            />
-                        </div>
 
-                        <div className="flex items-center gap-2">
-                            <label className="text-sm font-medium">Ada Praktikum?</label>
-                            <input
-                                type="checkbox"
-                                checked={data.enablePraktikum}
-                                onChange={(e) =>
-                                    updateWizardData(currentPage, "enablePraktikum", e.target.checked)
-                                }
-                            />
-                        </div>
-
-                        {data.enablePraktikum && (
-                            <>
-                                <div>
-                                    <label className="block text-sm font-medium">SKS Praktikum</label>
-                                    <input
-                                        type="number"
-                                        value={data.sks_praktikum || ""}
-                                        onChange={(e) =>
-                                            updateWizardData(currentPage, "sks_praktikum", e.target.value)
-                                        }
-                                        className="w-full border rounded px-3 py-2"
-                                        placeholder="Contoh: 2"
-                                    />
-                                </div>
-
-                                {data.sks_praktikum === "2" && (
-                                    <div className="mt-2">
-                                        <label className="inline-flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                className="form-checkbox"
-                                                checked={data.pisahPraktikum || false}
-                                                onChange={(e) =>
-                                                    updateWizardData(currentPage, "pisahPraktikum", e.target.checked)
-                                                }
-                                            />
-                                            <span className="ml-2 text-sm text-gray-700">Pisahkan Praktikum (2 sesi, masing-masing 1 SKS)</span>
-                                        </label>
-                                    </div>
-                                )}
-                            </>
-                        )}
-
-                        <div>
+                        {/* STEP 1: Jumlah Kelas */}
+                        <div className="mb-4">
                             <label className="block text-sm font-medium">Jumlah Kelas</label>
                             <input
                                 type="number"
@@ -192,15 +137,18 @@ const AddMatkulAktifWizard = ({ setShowAddModal }) => {
                                 onChange={(e) => {
                                     const jumlah = parseInt(e.target.value) || 0;
                                     const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-                                    const kelasSudahTerpakai = wizardData[currentPage].kelasTerpakai || [];
+                                    const kelasSudahTerpakai = data.kelasTerpakai || [];
 
                                     const abjadAvailable = abjad.split("").filter((huruf) => !kelasSudahTerpakai.includes(huruf));
 
-                                    const kelasBaru = Array.from({length: jumlah}).map((_, idx) => ({
-                                        kelas: abjadAvailable[idx] || abjad[idx], // fallback jika habis
-                                        dosen: ""
+                                    const kelasBaru = Array.from({ length: jumlah }).map((_, idx) => ({
+                                        kelas: abjadAvailable[idx] || abjad[idx],
+                                        dosenTeori: "",
+                                        pisahDosen: false,
+                                        dosenPraktikum: "",
+                                        pisahPraktikum: false
                                     }));
+
 
                                     updateWizardData(currentPage, "jumlahKelas", jumlah);
                                     updateWizardData(currentPage, "kelasList", kelasBaru);
@@ -208,30 +156,93 @@ const AddMatkulAktifWizard = ({ setShowAddModal }) => {
                                 className="w-full border rounded px-3 py-2"
                                 placeholder="Contoh: 3"
                             />
-
                         </div>
 
                         {Array.isArray(data.kelasList) && data.kelasList.map((kls, idx) => (
-                            <div key={idx}>
-                                <label className="block text-sm font-medium mb-1">
-                                    Dosen untuk Kelas {kls.kelas}
-                                </label>
-                                <Select
-                                    value={dosenList.find((d) => d.user_id === kls.dosen) || null}
-                                    onChange={(selected) => {
-                                        const updatedList = [...data.kelasList];
-                                        updatedList[idx].dosen = selected?.user_id || "";
-                                        updateWizardData(currentPage, "kelasList", updatedList);
-                                    }}
-                                    options={dosenList}
-                                    getOptionLabel={(d) => `${d.username.trim()} (${d.user_id})`}
-                                    getOptionValue={(d) => d.user_id}
-                                    placeholder="Pilih Dosen"
-                                    classNamePrefix="react-select"
-                                />
+                            <div key={idx} className="border border-gray-300 p-4 rounded mb-4">
+                                <p className="font-semibold mb-2">Kelas {kls.kelas}</p>
+
+                                {/* Dosen Teori */}
+                                <div className="mb-3">
+                                    <label className="block text-sm font-medium text-gray-700">Dosen Teori</label>
+                                    <Select
+                                        value={dosenList.find((d) => d.user_id === kls.dosenTeori) || null}
+                                        onChange={(selected) => {
+                                            const updated = [...data.kelasList];
+                                            updated[idx].dosenTeori = selected?.user_id || "";
+                                            updated[idx].dosenPraktikum = selected?.user_id || ""; // default sama
+                                            updateWizardData(currentPage, "kelasList", updated);
+                                        }}
+                                        options={dosenList}
+                                        getOptionLabel={(d) => `${d.username} (${d.user_id})`}
+                                        getOptionValue={(d) => d.user_id}
+                                        placeholder="Pilih Dosen Teori"
+                                        classNamePrefix="react-select"
+                                    />
+                                </div>
+
+                                {/* Checkbox Pisah Dosen Praktikum */}
+                                {data.hasPraktikum && (
+                                    <div className="mb-3">
+                                        <label className="inline-flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={kls.pisahDosen || false}
+                                                onChange={(e) => {
+                                                    const updated = [...data.kelasList];
+                                                    updated[idx].pisahDosen = e.target.checked;
+                                                    updateWizardData(currentPage, "kelasList", updated);
+                                                }}
+                                                className="form-checkbox"
+                                            />
+                                            <span className="ml-2 text-sm text-gray-700">Pisahkan Dosen Praktikum</span>
+                                        </label>
+                                    </div>
+                                )}
+
+                                {/* Select Dosen Praktikum */}
+                                {data.hasPraktikum && kls.pisahDosen && (
+                                    <div className="mb-3">
+                                        <label className="block text-sm font-medium text-gray-700">Dosen Praktikum</label>
+                                        <Select
+                                            value={dosenList.find((d) => d.user_id === kls.dosenPraktikum) || null}
+                                            onChange={(selected) => {
+                                                const updated = [...data.kelasList];
+                                                updated[idx].dosenPraktikum = selected?.user_id || "";
+                                                updateWizardData(currentPage, "kelasList", updated);
+                                            }}
+                                            options={dosenList}
+                                            getOptionLabel={(d) => `${d.username} (${d.user_id})`}
+                                            getOptionValue={(d) => d.user_id}
+                                            placeholder="Pilih Dosen Praktikum"
+                                        />
+                                    </div>
+                                )}
+                                {/* Pisahkan Praktikum */}
+                                {data.hasPraktikum && allCourses.find(c => c.id === data.id)?.sks_praktikum > 1 && (
+                                    <div className="mb-3">
+                                        <label className="inline-flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={kls.pisahPraktikum || false}
+                                                onChange={(e) => {
+                                                    const updated = [...data.kelasList];
+                                                    updated[idx].pisahPraktikum = e.target.checked;
+                                                    updateWizardData(currentPage, "kelasList", updated);
+                                                }}
+                                                className="form-checkbox"
+                                            />
+                                            <span className="ml-2 text-sm text-gray-700">Pisahkan Praktikum (2 sesi x 1 SKS)</span>
+                                        </label>
+                                    </div>
+                                )}
+
                             </div>
                         ))}
+
+
                     </div>
+
 
                     <div className="flex justify-between items-center mt-6">
                         <button
